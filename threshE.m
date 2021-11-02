@@ -1,4 +1,4 @@
-function [pix_threshold] = threshE(im,col,row,rad1,rad2,ir1,ir2,or1,or2,Kccd, saturation)
+function [src_pix_threshold] = threshE(im,col,row,rad1,rad2,ir1,ir2,or1,or2,Kccd, saturation)
 
 %{
 AperE Original code by Professor Andrew Harris. Edited by Alyssa Pagan
@@ -66,6 +66,7 @@ bb=length(find((yy(:,1)>=(row-2*fw))&(yy(:,1)<=(row+2*fw))));
 px=reshape(xx(ix),bb,aa);
 py=reshape(yy(ix),bb,aa);
 pz=reshape(pix_threshold(ix),bb,aa);
+src_pix_threshold = pz
 clf;
 
 %Displaying Sky-Subtracted Threshold Image
