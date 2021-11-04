@@ -2,7 +2,6 @@ function [image_data_array] = createImageDataArray(folder_filepath)
     if(folder_filepath == "")
         folder_filepath = uigetdir;
     end
-    folder_filepath
     folder_files = dir(fullfile(folder_filepath,'*.fit'))
     folder_filenames = strings(size(folder_files));
     for i = 1:length(folder_files)

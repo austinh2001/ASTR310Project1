@@ -7,9 +7,13 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     master_dark = generateMasterDark(current_directory + data_folder_path + "Calibration\Darks\",master_bias);
 
     %Get the exposure time of the darks (this assumes they are all the same)]
-    fullfile(current_directory + data_folder_path + "Calibration\Darks\",'*.fit')
+    dir(fullfile(current_directory + data_folder_path + "Calibration\Darks\",'*.fit'))
     dark_folder_files = dir(fullfile(current_directory + data_folder_path + "Calibration\Darks\",'*.fit'));
     dark_folder_filenames = strings(size(dark_folder_files));
+    for i = 1:length(folder_files)
+        baseFileName = folder_files(i).name;
+        folder_filenames(i) = baseFileName;
+    end
     current_directory + data_folder_path + "Calibration\Darks\" + dark_folder_filenames(1)
     template_dark = rfits(current_directory + data_folder_path + "Calibration\Darks\" + dark_folder_filenames(1));
     dark_exposure = template_dark.exposure;
