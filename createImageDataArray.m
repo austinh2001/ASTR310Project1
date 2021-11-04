@@ -1,17 +1,25 @@
-function [image_data_array] = createImageDataArray(folder_filepath)
-    if(folder_filepath == "")
-        folder_filepath = uigetdir;
+function [image_data_array] = createImageDataArray(folder_directory)
+    current_directory = pwd + "\";
+    if(folder_directory == "")
+        folder_directory = uigetdir;
+        folder_directory = erase(folder_directory,current_directory);
     end
-    folder_files = dir(fullfile(folder_filepath,'*.fit'))
-    folder_filenames = strings(size(folder_files));
-    for i = 1:length(folder_files)
-        baseFileName = folder_files(i).name;
-        folder_filenames(i) = baseFileName;
+    folder_filenames = getDirectoryFilenames(folder_directory);
+
+    current_image_size = -1;
+    for i=1:length(folder_filenames)
+        image_fits_file = rfits(current_directory + folder_directory + folder_filenames(i));
+        if(i ~= 1 & current_image_size ~= size(image_fits_file.data))
+            error("FITS files located at: " + folder_directory + " contain image(s) of different sizes.")
+        end
+        current_image_size = size(image_fits_file.data);
     end
-    template_fits_file = rfits(folder_filepath + folder_filenames(1));
-    image_data_array = zeros(size(template_fits_file.data));
-    for j = 1:length(folder_filenames)
-        fits_file = rfits(folder_filepath + folder_filenames(j));
-        image_data_array(:,:,j) = fits_file.data;
+
+    image_data_array = zeros(current_image_size);
+
+    for k=1:length(folder_filenames)
+        image_fits_file = rfits(current_directory + folder_directory + folder_filenames(k));
+        image_data_array(:,:,k) = image_fits_file.data;
     end
+
 end
