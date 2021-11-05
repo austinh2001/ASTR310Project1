@@ -1,47 +1,62 @@
 function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path)
     %Generate a Master Bias
-    bias_directory = data_folder_path + "Calibration\Biases\";
-    master_bias = generateMasterBias(bias_directory);
+    bias_folder_filepath = data_folder_path + "Calibration\Biases\";
+    bias_folder = getFromPath(bias_folder_filepath);
+    master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark
-    dark_directory = data_folder_path + "Calibration\Darks\";
-    master_dark = generateMasterDark(dark_directory,master_bias);
+    dark_folder_filepath = data_folder_path + "Calibration\Darks\";
+    dark_folder = getFromPath(dark_folder_filepath);
+    master_dark = generateMasterDark(dark_folder,master_bias);
 
     %Get the exposure time of the darks (this assumes they are all the same)
-    dark_exposure = getExposureTime(dark_directory);
+    dark_exposure = getExposureTime(dark_folder);
 
-    %Get the exposure time of the flats for each filter (this assumes they are all the same per filter)
-    %Loop through flat filter folders
-    filter_folders = getDirectoryFolders(data_folder_path + "Calibration\Flats\");
+    % Array of the filters? Maybe useful
+    flats_folder_filepath = data_folder_path + "Calibration\Flats\";
+    flats_folder = getFromPath(flats_folder_filepath);
+    flat_filter_folders = getDirectoryFolders(flats_folder);
 
-    %Calculate Exposure Time Correction Factor
-    %Generalize this to an arbitrary number of filters
-    Ha_exposure_time_correction_factor = Ha_flat_exposure/dark_exposure;
-    O_exposure_time_correction_factor = O_flat_exposure/dark_exposure;
-    master_Ha_flat = generateMasterFlat(Ha_flat_directory,master_bias,master_dark, Ha_exposure_time_correction_factor);
-    master_O_flat = generateMasterFlat(O_flat_directory,master_bias,master_dark, O_exposure_time_correction_factor);
-    normalized_master_Ha_flat = normalizeMasterFlat(master_Ha_flat);
-    normalized_master_O_flat = normalizeMasterFlat(master_O_flat);
+    %Calculate Exposure Time Correction Factor for each flat filter
+    flat_filter_folders_size = size(flat_filter_folders);
+    number_of_flat_filter_folders = flat_filter_folders_size(2);
+    filter_exposure_time_correction_factors = zeros(number_of_flat_filter_folders,1);
+    for i=1:number_of_flat_filter_folders
+        filter_exposure_time_correction_factors(i) = getExposureTime(flat_filter_folders(:,i))/dark_exposure;
+    end
+    
+    %Generate the Master Flats for each filter and their associated
+    %normalized master flats for each filter
+    flat_template_image = generateTemplateFITSData(flat_filter_folders(:,1));
+    master_filter_flats = flat_template_image;
+    normalized_master_filter_flats = flat_template_image;
+
+    for j=1:length(number_of_flat_filter_folders)
+        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_bias,master_dark,filter_exposure_time_correction_factors(j));
+        normalized_master_filter_flats(:,:,j) = normalizeMasterFlat(master_filter_flats(:,:,j));
+    end
     
     %Get all folders containing science images
-    science_image_directory = data_folder_path + "Science Images\"
-    science_image_folders = dir(fullfile(science_image_directory));
+    science_image_folder_filepath = data_folder_path + "Science Images\";
+    science_image_folder = getFromPath(science_image_folder_filepath);
+    science_image_folders = getDirectoryFolders(science_image_folder);
 
     %Loop through files in each science image folder
-    combined_calibrated_science_images = [];
-    for i=1:length(science_image_folders)
-        science_image_files = dir(fullfile(current_directory + data_folder_path + "Science Images\" + science_image_folders(i),'*.fit'));
-        template_science_image_fits = rfits(science_image_files(1));
-        calibrated_science_images = zeroes(size(template_science_image_fits.data));
-        for j=1:length(science_image_files)
-            science_image_fits = rfits(science_image_files(j));
+    science_image_folders_size = size(science_image_folders);
+    number_of_science_image_filters = science_image_folders_size(2);
+    combined_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
+    for i=1:number_of_science_image_filters
+        calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
+        for j=1:science_image_folders_size(1)
+            science_image_directory = science_image_folders(j,i).folder;
+            science_image_filename = science_image_folders(j,i).name;
+            science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
             science_image_data = science_image_fits.data;
             science_image_data = science_image_data - master_bias;
             exposure_time_correction_factor = science_image_fits.exposure/dark_exposure;
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
-            science_image_data = science_image_data / normalized_master_flat;
+            science_image_data = science_image_data / normalized_master_filter_flats(i);
             calibrated_science_images(:,:,j) = science_image_data;
         end
-        combined_calibrated_science_image = MultiCoAdd(calibrated_science_images);
-        combined_calibrated_science_images = [combined_calibrated_science_images [science_image_folders(i) combined_calibrated_science_image]];
+        combined_calibrated_science_images(:,:,i) = MultiCoAdd(calibrated_science_images);
     end
 end

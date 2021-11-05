@@ -1,5 +1,9 @@
 %% Calibration Testing
-calibrateScienceImages("Data\")
+calibrated_science_images = calibrateScienceImages("Challenge Data\");
+wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit")
+displayAdjustedImage(calibrated_science_images(:,:,1))
+% NOTE: When comparing to the provided calibrated image (option 1), the
+% values don't match up exactly (but seem reasonable?)
 %% threshE Testing
 m27_Ha = rfits("M27-001-ha.fit");
 %m29_2 = rfits("m29-2.fit");

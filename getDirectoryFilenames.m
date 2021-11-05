@@ -1,14 +1,16 @@
-function [folder_filenames] = getDirectoryFilenames(folder_directory)
-    current_directory = pwd + "\";
-    folder_files = dir(fullfile(current_directory + folder_directory));
-    %This removes two strange default "files" provided by the dir function
-    folder_files = folder_files(3:end)
-    if(isempty(folder_files))
-        error("There are no files in the directory: " + folder_directory)
+function [folder_filenames] = getDirectoryFilenames(folder)
+    %Input: a folder struct provided by the dir method or the custom-made
+    %getFromPath method
+    %Ouput: a string array of folder filenames
+
+    if(isempty(folder))
+        error("There are no files in the directory: " + folder.folder)
     end
-    folder_filenames = strings(size(folder_files));
-    for i = 1:length(folder_files)
-        folder_filenames(i) = folder_files(i).name;
+
+    folder_filenames = strings(size(folder));
+    for i = 1:length(folder)
+        folder_filenames(i) = folder(i).name;
     end
+    
 end
 
