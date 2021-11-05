@@ -8,12 +8,7 @@ calibrated_data_size = size(calibrated_data);
 scaled_differences = zeros(calibrated_data_size);
 for i=1:calibrated_data_size(1)
     for j=1:calibrated_data_size(2)
-        value = (calibrated_data(i,j) - calibrated_science_images(i,j,1))/calibrated_data(i,j);
-        if(isnan(value) | isinf(value))
-            scaled_differences(i,j) = 0;
-        else
-            scaled_differences(i,j) = (calibrated_data(i,j) - calibrated_science_images(i,j,1))/calibrated_data(i,j)*100;
-        end
+        scaled_differences(i,j) = (calibrated_data(i,j) - calibrated_science_images(i,j,1))/calibrated_data(i,j);
     end
 end
 displayAdjustedImage(scaled_differences)

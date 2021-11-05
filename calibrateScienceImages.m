@@ -40,7 +40,9 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     science_image_folder = getFromPath(science_image_folder_filepath);
     science_image_folders = getDirectoryFolders(science_image_folder);
 
-    %Loop through files in each science image folder
+    %Loop through files in each science image folder, apply the necessary
+    %calibrations, and use MultiCoAdd to add up all the calibrated science
+    %images
     science_image_folders_size = size(science_image_folders);
     number_of_science_image_filters = science_image_folders_size(2);
     combined_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));

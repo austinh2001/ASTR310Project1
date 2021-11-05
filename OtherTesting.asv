@@ -1,3 +1,0 @@
-science_image_folder = getFromPath("Data\Science Images\");
-folders = getDirectoryFolders(science_image_folder)
-folders(1)
