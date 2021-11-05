@@ -11,7 +11,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     %Get the exposure time of the darks (this assumes they are all the same)
     dark_exposure = getExposureTime(dark_folder);
 
-    % Array of the filters? Maybe useful
+    %Get the folders for the flats of each filter
     flats_folder_filepath = data_folder_path + "Calibration\Flats\";
     flats_folder = getFromPath(flats_folder_filepath);
     flat_filter_folders = getDirectoryFolders(flats_folder);
