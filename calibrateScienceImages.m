@@ -48,20 +48,19 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     combined_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
     for i=1:number_of_science_image_filters
         calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
-        %Shifting The Images
-        science_image_data_array = shiftImages("Image-shift-9-24-2021.xlsx",createImageDataArray(science_image_folders(:,i)));
         for j=1:science_image_folders_size(1)
-            science_image_data = science_image_data_array(:,:,j);
             science_image_directory = science_image_folders(j,i).folder;
             science_image_filename = science_image_folders(j,i).name;
             science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
-
+            science_image_data = science_image_fits.data;
             science_image_data = science_image_data - master_bias;
             exposure_time_correction_factor = science_image_fits.exposure/dark_exposure;
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
             science_image_data = science_image_data / normalized_master_filter_flats(i);
             calibrated_science_images(:,:,j) = science_image_data;
         end
-        combined_calibrated_science_images(:,:,i) = MultiCoAdd(calibrated_science_images);
+        %Shifting The Images
+        shifted_calibrated_science_images = shiftImages("Image-shift-9-24-2021.xlsx",calibrated_science_images);
+        combined_calibrated_science_images(:,:,i) = MultiCoAdd(shifted_calibrated_science_images);
     end
 end
