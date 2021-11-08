@@ -14,9 +14,9 @@ calibrated_m27_Ha = rfits("calibrated_Ha_M27.fit");
 m27_001 = rfits("Data/Science Images/Ha/M27-001-ha.fit");
 egain = m27_001.egain;
 m27_center_coordinates = [672 481];
-target_aperture_radius = 450;
-sky_annulus_inner_radius = 500;
-sky_annulus_outer_radius = 550;
+target_aperture_radius = 100;
+sky_annulus_inner_radius = 10;
+sky_annulus_outer_radius = 15;
 src_pix_threshold = threshE(calibrated_m27_Ha.data,m27_center_coordinates(2),m27_center_coordinates(1),target_aperture_radius,target_aperture_radius,sky_annulus_inner_radius,sky_annulus_inner_radius,sky_annulus_outer_radius,sky_annulus_outer_radius,1/egain);
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));

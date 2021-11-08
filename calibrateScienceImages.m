@@ -61,6 +61,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
         end
         %Shifting The Images
         shifted_calibrated_science_images = shiftImages("Image-shift-9-24-2021.xlsx",calibrated_science_images);
+        %Co-Adding the shifted, calibrated science image
         combined_calibrated_science_images(:,:,i) = MultiCoAdd(shifted_calibrated_science_images);
     end
 end

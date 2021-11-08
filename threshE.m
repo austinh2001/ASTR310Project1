@@ -38,9 +38,6 @@ ssig=std(im(ixsky))/sqrt(length(ixsky))/Kccd; % sky noise in average
 %best
 threshold = median(pix);
 
-%Fit Ellipse
-%fitEllipseToImage(ixsrc)
-
 pix_threshold = zeros(size(im));
 image_size = size(pix_threshold);
 for i=1:image_size(1)
@@ -85,11 +82,12 @@ figure
 
 %Displaying Sky-Subtracted Image
 pz=reshape(im(ix)-sky,bb,aa);
-imagesc(px(1,:),py(:,1),pz);
+%imagesc(px(1,:),py(:,1),pz);
 axis image
 p=(0:360)*pi/180;
 xc=(cos(p));
 yc=sin(p);
+displayAdjustedImage(pz)
 hold on
 plot(col+rad1*xc,row+rad2*yc,'w');
 plot(col+ir1*xc,row+ir2*yc,'r');
