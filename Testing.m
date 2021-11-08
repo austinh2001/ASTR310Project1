@@ -1,7 +1,12 @@
 %% Calibration Testing
-calibrated_science_images = calibrateScienceImages("Challenge Data\");
-wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit");
-displayAdjustedImage(calibrated_science_images(:,:,1))
+calibrated_science_images = calibrateScienceImages("Data\");
+calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
+min_val = min(calibrated_Ha_M27_image(:))
+calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
+%wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit");
+wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27.fit")
+wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27.fit")
+
 option1_fits = rfits("double-option1.fit");
 calibrated_data = option1_fits.data;
 calibrated_data_size = size(calibrated_data);
@@ -16,7 +21,8 @@ for i=1:calibrated_data_size(1)
         end
     end
 end
-displayAdjustedImage(scaled_differences)
+
+%displayAdjustedImage(scaled_differences)
 
 % NOTE: When comparing to the provided calibrated image (option 1), the
 % values don't match up exactly (but seem reasonable?)
