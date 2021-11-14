@@ -1,7 +1,7 @@
 %% Calibration Testing
 calibrated_science_images = calibrateScienceImages("Data\");
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
-min_val = min(calibrated_Ha_M27_image(:))
+min_val = min(calibrated_Ha_M27_image(:));
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 %wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit");
 wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27.fit")

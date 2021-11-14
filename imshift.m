@@ -2,7 +2,6 @@ function imr=imshift(im,nr,nc)
 
 % IMSHIFT(im,nr,nc) shifts and image by nr rows and nc columns
 % (which can be either positive or negative)
-nr
 nr=round(nr);
 nc=round(nc);
 [a,b]=size(im);
