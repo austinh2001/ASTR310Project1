@@ -58,9 +58,20 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
             science_image_data = science_image_data / normalized_master_filter_flats(i);
             calibrated_science_images(:,:,j) = science_image_data;
+
+            %displayAdjustedImage(science_image_data)
+            %title("Calibrated Image: " + string(j))
+            %figure
         end
         %Shifting The Images
         shifted_calibrated_science_images = shiftImages("Image-shift-9-24-2021.xlsx",calibrated_science_images);
+
+        %for j=1:science_image_folders_size(1)
+        %    displayAdjustedImage(shifted_calibrated_science_images(:,:,j))
+        %    title("Calibrated-Shifted Image: " + string(j))
+        %    figure
+        %end
+
         %Co-Adding the shifted, calibrated science image
         combined_calibrated_science_images(:,:,i) = MultiCoAdd(shifted_calibrated_science_images);
     end

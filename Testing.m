@@ -7,8 +7,10 @@ calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27.fit")
 wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27.fit")
 displayAdjustedImage(calibrated_Ha_M27_image)
+title("Calibrated H-alpha")
 figure
 displayAdjustedImage(calibrated_OIII_M27_image)
+title("Calibrated OIII")
 %% threshE Testing
 calibrated_m27_Ha = rfits("calibrated_Ha_M27.fit");
 m27_001 = rfits("Data/Science Images/Ha/M27-001-ha.fit");
