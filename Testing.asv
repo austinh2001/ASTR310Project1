@@ -5,7 +5,7 @@ calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27_" + date + ".fit")
 wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27_" + date + ".fit")
-
+d
 %% Display Testing
 colorized_calibrated_Ha_M27_image = colorizeImage(calibrated_Ha_M27_image,[1,0,0],5);
 imshow(colorized_calibrated_Ha_M27_image)
@@ -21,17 +21,14 @@ title("CoAdded Colorized Ha & OIII: "+ date)
 %% threshE Testing
 date = "10-27-2021";
 calibrated_Ha_M27_image = rfits("calibrated_Ha_M27_" + date + ".fit");
-calibrated_OIII_M27_image = rfits("calibrated_OIII_M27_" + date + ".fit")
-sky_noise_region = [1100,1300; 700,900]
-numOfSigma = 5
+calibrated_OIII_M27_image = rfits("calibrated_OIII_M27_" + date + ".fit");
+sky_noise_region = [1100,1300;700,900];
+numOfSigma = 5;
 threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],numOfSigma))
 figure
 threshold_calibrated_OIII_M27_image = threshE(calibrated_OIII_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_OIII_M27_image,[0,1,0],numOfSigma))
-figure
-coadded_threshold_colorized_calibrated_images = CoAdd(threshold_calibrated_Ha_M27_image,)
-imshow(coadded_threshold_colorized_calibrated_images)
 %createVaryingThresholdVideo(calibrated_m27_Ha.data,5,20)
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));
