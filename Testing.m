@@ -1,29 +1,26 @@
 %% Calibration Testing
-calibrated_science_images = calibrateScienceImages("Observations\9-26-2021\","Image-shift-9-26-2021");
+date = "10-27-2021";
+calibrated_science_images = calibrateScienceImages("Observations\" + date + "\","Image-shift-" + date);
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
-min_val = min(calibrated_Ha_M27_image(:));
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
-%wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit");
-wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27.fit")
-wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27.fit")
-displayAdjustedImage(calibrated_Ha_M27_image)
-title("Calibrated H-alpha")
+wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27_" + date + ".fit")
+wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27_" + date + ".fit")
+
+%% Display Testing
+colorized_calibrated_Ha_M27_image = colorizeImage(calibrated_Ha_M27_image,[1,0,0],5);
+imshow(colorized_calibrated_Ha_M27_image)
+title("Colorized H-alpha: "+ date)
 figure
-displayAdjustedImage(calibrated_OIII_M27_image)
-title("Calibrated OIII")
+colorized_calibrated_OIII_M27_image = colorizeImage(calibrated_OIII_M27_image,[0,1,0],5);
+imshow(colorized_calibrated_OIII_M27_image)
+title("Colorized OIII: "+ date)
+figure
+coadded_calibrated_images = CoAdd(colorized_calibrated_Ha_M27_image,colorized_calibrated_OIII_M27_image);
+imshow(coadded_calibrated_images)
+title("CoAdded Colorized Ha & OIII: "+ date)
 %% threshE Testing
-calibrated_m27_Ha = rfits("calibrated_Ha_M27.fit");
-m27_001 = rfits("Data/Science Images/Ha/M27-001-ha.fit");
-egain = m27_001.egain;
-m27_center_coordinates = [672 481];
-target_aperture_radius = 450;
-sky_annulus_inner_radius = 500;
-sky_annulus_outer_radius = 550;
-three_sig_threshold = 245.296
-four_sig_threshold = 278.21
-five_sig_threshold = 311.12
-src_pix_threshold = threshE(calibrated_m27_Ha.data,m27_center_coordinates(2),m27_center_coordinates(1),target_aperture_radius,target_aperture_radius,sky_annulus_inner_radius,sky_annulus_inner_radius,sky_annulus_outer_radius,sky_annulus_outer_radius,1/egain,five_sig_threshold);
-wfits(src_pix_threshold,"calibrated_5_sig_threshold_Ha_M27.fit")
+calibrated_m27_Ha = rfits("calibrated_Ha_M27_" + date + ".fit");
+createVaryingThresholdVideo(calibrated_m27_Ha.data,5,20)
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));
 image_data = zeros(size(data));

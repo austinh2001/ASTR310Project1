@@ -1,6 +1,6 @@
 function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path,shifts_filename)
     %Generate a Master Bias
-    bias_folder_filepath = data_folder_path + "Calibration\Biases\"
+    bias_folder_filepath = data_folder_path + "Calibration\Biases\";
     bias_folder = getFromPath(bias_folder_filepath);
     master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark

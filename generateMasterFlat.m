@@ -8,7 +8,7 @@ function [master_flat] = generateMasterFlat(flat_folder,master_bias,master_dark,
     end
     master_flat = MedianCombine(flat_imageDataArray);
 
-    displayAdjustedImage(master_flat)
-    title("Master Flat")
-    figure
+    %displayAdjustedImage(master_flat)
+    %title("Master Flat")
+    %figure
 end

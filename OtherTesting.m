@@ -1,4 +1,2 @@
-data_folder_path = "Observations\9-26-2021\"
-%data_folder_path = "Data\"
-bias_folder_filepath = data_folder_path + "Calibration\Biases\"
-bias_folder = getFromPath(bias_folder_filepath);
+image_data = [0,3,1,244,243,112] 
+color_normalized_image_data = normalize(image_data,'range',[0 255])

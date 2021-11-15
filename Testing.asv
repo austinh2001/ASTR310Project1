@@ -1,23 +1,27 @@
 %% Calibration Testing
-calibrated_science_images = calibrateScienceImages("Data\");
+date = "10-27-2021";
+calibrated_science_images = calibrateScienceImages("Observations\" + date + "\","Image-shift-" + date);
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
-min_val = min(calibrated_Ha_M27_image(:))
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
-%wfits(calibrated_science_images(:,:,1),"challenge2_example_calibration.fit");
-wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27.fit")
-wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27.fit")
-displayAdjustedImage(calibrated_Ha_M27_image)
+wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27_" + date + ".fit")
+wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27_" + date + ".fit")
+
+%% Display Testing
+
+%displayAdjustedImage(calibrated_Ha_M27_image)
+[X,cmap] = imread("apple.png");
+colorized_calibrated_Ha_M27_image = colorizeImage(X(:,:,1),"apple");
+newAppleImage = cat(3,X(:,:,1),X(:,:,2),X(:,:,3))
+imshow(newAppleImage)
+figure
+imshow(colorized_calibrated_Ha_M27_image)
+title("Calibrated H-alpha: "+ date)
 figure
 displayAdjustedImage(calibrated_OIII_M27_image)
+title("Calibrated OIII: "+ date)
 %% threshE Testing
-calibrated_m27_Ha = rfits("calibrated_Ha_M27.fit");
-m27_001 = rfits("Data/Science Images/Ha/M27-001-ha.fit");
-egain = m27_001.egain;
-m27_center_coordinates = [672 481];
-target_aperture_radius = 100;
-sky_annulus_inner_radius = 10;
-sky_annulus_outer_radius = 15;
-src_pix_threshold = threshE(calibrated_m27_Ha.data,m27_center_coordinates(2),m27_center_coordinates(1),target_aperture_radius,target_aperture_radius,sky_annulus_inner_radius,sky_annulus_inner_radius,sky_annulus_outer_radius,sky_annulus_outer_radius,1/egain);
+calibrated_m27_Ha = rfits("calibrated_Ha_M27_" + date + ".fit");
+createVaryingThresholdVideo(calibrated_m27_Ha.data,5,20)
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));
 image_data = zeros(size(data));
