@@ -1,5 +1,5 @@
 %% Calibration Testing
-calibrated_science_images = calibrateScienceImages("Data\");
+calibrated_science_images = calibrateScienceImages("Observations\9-26-2021\","Image-shift-9-26-2021");
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
 min_val = min(calibrated_Ha_M27_image(:));
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
@@ -19,7 +19,11 @@ m27_center_coordinates = [672 481];
 target_aperture_radius = 450;
 sky_annulus_inner_radius = 500;
 sky_annulus_outer_radius = 550;
-src_pix_threshold = threshE(calibrated_m27_Ha.data,m27_center_coordinates(2),m27_center_coordinates(1),target_aperture_radius,target_aperture_radius,sky_annulus_inner_radius,sky_annulus_inner_radius,sky_annulus_outer_radius,sky_annulus_outer_radius,1/egain);
+three_sig_threshold = 245.296
+four_sig_threshold = 278.21
+five_sig_threshold = 311.12
+src_pix_threshold = threshE(calibrated_m27_Ha.data,m27_center_coordinates(2),m27_center_coordinates(1),target_aperture_radius,target_aperture_radius,sky_annulus_inner_radius,sky_annulus_inner_radius,sky_annulus_outer_radius,sky_annulus_outer_radius,1/egain,five_sig_threshold);
+wfits(src_pix_threshold,"calibrated_5_sig_threshold_Ha_M27.fit")
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));
 image_data = zeros(size(data));

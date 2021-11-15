@@ -1,4 +1,4 @@
-function [src_pix_threshold] = threshE(im,col,row,rad1,rad2,ir1,ir2,or1,or2,Kccd, saturation)
+function [src_pix_threshold] = threshE(im,col,row,rad1,rad2,ir1,ir2,or1,or2,Kccd,threshold,saturation)
 
 %{
 AperE Original code by Professor Andrew Harris. Edited by Alyssa Pagan
@@ -21,7 +21,7 @@ ThreshE adaptations by Team CANS
 
 %}
 
-if (nargin==10), saturation=Inf; end
+if (nargin==11), saturation=Inf; end
 
 [a,b]=size(im);
 [xx,yy]=meshgrid(1:b,1:a);
@@ -36,7 +36,6 @@ ssig=std(im(ixsky))/sqrt(length(ixsky))/Kccd; % sky noise in average
 %Find useful threshold value
 %Determine optimal threshold and way to achieve it: median may not be the
 %best
-threshold = median(pix);
 
 pix_threshold = zeros(size(im));
 image_size = size(pix_threshold);

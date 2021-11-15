@@ -1,6 +1,6 @@
-function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path)
+function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path,shifts_filename)
     %Generate a Master Bias
-    bias_folder_filepath = data_folder_path + "Calibration\Biases\";
+    bias_folder_filepath = data_folder_path + "Calibration\Biases\"
     bias_folder = getFromPath(bias_folder_filepath);
     master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark
@@ -64,7 +64,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             %figure
         end
         %Shifting The Images
-        shifted_calibrated_science_images = shiftImages("Image-shift-9-24-2021.xlsx",calibrated_science_images);
+        shifted_calibrated_science_images = shiftImages(shifts_filename,calibrated_science_images);
 
         %for j=1:science_image_folders_size(1)
         %    displayAdjustedImage(shifted_calibrated_science_images(:,:,j))
