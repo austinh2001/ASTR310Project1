@@ -1,10 +1,9 @@
-function [threshold_image] = threshE(image_data,numOfSigma)
+function [threshold_image] = threshE(image_data,noise_region,numOfSigma)
 %{
 ThreshE adaptations by Team CANS
 %}
 
 %Find useful threshold value
-noise_region = [1100,1300 ; 700,900];
 threshold = calculateThreshold(image_data,noise_region,numOfSigma);
 threshold_image = zeros(size(image_data));
 image_size = size(threshold_image);
