@@ -6,15 +6,13 @@ calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27_" + date + ".fit")
 wfits(calibrated_OIII_M27_image,"calibrated_OIII_M27_" + date + ".fit")
 displayAdjustedImage(calibrated_Ha_M27_image)
-hold on
-rectangle("Position",[700,1100,1300-1100,900-700],"EdgeColor","b")
-hold off
+sky_noise_region = [[1100,700] ; [1300,900]]
+displayRegion(sky_noise_region)
 figure
 
 displayAdjustedImage(calibrated_OIII_M27_image)
-hold on
-rectangle("Position",[700,1100,1300-1100,900-700],"EdgeColor","b")
-hold off
+displayRegion(sky_noise_region)
+figure
 
 %% Display Testing
 colorized_calibrated_Ha_M27_image = colorizeImage(calibrated_Ha_M27_image,[1,0,0],5);
@@ -32,7 +30,7 @@ title("CoAdded Colorized Ha & OIII: "+ date)
 date = "10-27-2021";
 calibrated_Ha_M27_image = rfits("calibrated_Ha_M27_" + date + ".fit");
 calibrated_OIII_M27_image = rfits("calibrated_OIII_M27_" + date + ".fit");
-sky_noise_region = [1100,1300;700,900];
+sky_noise_region = [[1100,700] ; [1300,900]]
 numOfSigma = 5;
 threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],numOfSigma))
