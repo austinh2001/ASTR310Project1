@@ -25,7 +25,7 @@ title("Colorized OIII: "+ date)
 figure
 coadded_calibrated_images = CoAdd(colorized_calibrated_Ha_M27_image,colorized_calibrated_OIII_M27_image);
 imshow(coadded_calibrated_images)
-title("CoAdded Colorized Ha & OIII: "+ date)
+title("CoAdded Colorized Ha & OIII: " + date)
 %% threshE Testing
 date = "10-27-2021";
 calibrated_Ha_M27_image = rfits("calibrated_Ha_M27_" + date + ".fit");
@@ -34,9 +34,16 @@ sky_noise_region = [[1100,700] ; [1300,900]]
 numOfSigma = 5;
 threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],numOfSigma))
+title("Colorized-" + string(numOfSigma) + "σ Threshold of H-alpha: " + date)
 figure
 threshold_calibrated_OIII_M27_image = threshE(calibrated_OIII_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_OIII_M27_image,[0,1,0],numOfSigma))
+title("Colorized-" + string(numOfSigma) + "σ Threshold of OIII: " + date)
+figure
+
+coadded_threshold_colorized_calibrated_images = CoAdd(colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],numOfSigma),colorizeImage(threshold_calibrated_OIII_M27_image,[0,1,0],numOfSigma));
+imshow(coadded_threshold_colorized_calibrated_images)
+title("Colorized-" + string(numOfSigma) + "σ Threshold of H-alpha & OIII: " + date)
 %createVaryingThresholdVideo(calibrated_m27_Ha.data,5,20)
 %% Ellipse Testing
 [non_zero_subscript_row, non_zero_subscript_column, image_data_points] = ind2sub(size(adjustedData),find(adjustedData));
