@@ -1,10 +1,9 @@
 %% Calibration Testing
 date = "10-27-2021";
-data_folder_path = "Observations\" + date + "\";
-calibrated_images_folder_path = "Calibrated Images\";
-generic_filename = date + "_calibrated_image";
-
-calibrated_science_images = calibrateScienceImages(data_folder_path,calibrated_images_folder_path,generic_filename);
+data_folder_path = "Observations\" + date + "\"
+calibrated_images_folder_path = "Calibrated Images\"
+generic_filename = calibrated_images_folder_path
+calibrated_science_images = calibrateScienceImages(data_folder_path,calibrated_images_folder_path, calibrated_images_folder_path);
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 displayAdjustedImage(calibrated_Ha_M27_image)
