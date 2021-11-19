@@ -17,6 +17,12 @@ displayAdjustedImage(calibrated_OIII_M27_image)
 title("Calibrated OIII: "+ date)
 displayRegion(sky_noise_region)
 
+% Abnormal pixels appear to be coming from the darks, which are being
+% applied to each science image and then shifted to form the seen pattern
+
+% Each dark image has the same hot pixels, indicating that these might be
+% due to the ccd rather than a cosmic ray
+
 %% Display Testing
 colorized_calibrated_Ha_M27_image = colorizeImage(calibrated_Ha_M27_image,[1,0,0],5);
 displayAdjustedImage(colorized_calibrated_Ha_M27_image,-1)

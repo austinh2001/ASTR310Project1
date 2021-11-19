@@ -69,9 +69,17 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             science_image_filename = science_image_folders(j,i).name;
             science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
             science_image_data = science_image_fits.data;
-            science_image_data = science_image_data - master_bias;
+            % THIS SUBTRACTION IS NOT NECESSARY
+            %science_image_data = science_image_data - master_bias;
+            if(i == 1 & j == 1)
+                wfits(science_image_data,pwd + "\" + "TestingForStrangePixel\" + "Before" + ".fit")
+            end
             exposure_time_correction_factor = science_image_fits.exposure/dark_exposure;
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
+            if(i == 1 & j == 1)
+                wfits(master_dark,pwd + "\" + "TestingForStrangePixel\" + "Dark" + ".fit")
+                wfits(science_image_data,pwd + "\" + "TestingForStrangePixel\" + "After" + ".fit")
+            end
             science_image_data = science_image_data / normalized_master_filter_flats(i);
             calibrated_science_images(:,:,j) = science_image_data;
         end
@@ -79,11 +87,10 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
         %Shifting The Images
         shifts_file_path = getFromPath(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\");
         shifts_filename = shifts_file_path.name;
-        shifted_calibrated_science_images = shiftImages(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);
+        shifted_calibrated_science_images = shiftImages(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);    
 
         %Co-Adding the shifted, calibrated science image
         combined_calibrated_science_images(:,:,i) = MultiCoAdd(shifted_calibrated_science_images);
-
         %Get the filter name associated with the shifted, calibrated
         %science image
         folder_path = science_image_folders(:,i).folder;
