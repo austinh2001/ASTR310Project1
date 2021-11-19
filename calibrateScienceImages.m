@@ -1,4 +1,8 @@
-function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path,shifts_filename)
+function [combined_calibrated_science_images] = calibrateScienceImages(data_folder_path,shifts_filename,target_folder_path,generic_filename)
+    %Erase the current directory if included in target_folder_path
+    current_directory = pwd + "\";
+    target_folder_path = erase(target_folder_path,current_directory);
+
     %Generate a Master Bias
     bias_folder_filepath = data_folder_path + "Calibration\Biases\";
     bias_folder = getFromPath(bias_folder_filepath);
@@ -58,11 +62,8 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
             science_image_data = science_image_data / normalized_master_filter_flats(i);
             calibrated_science_images(:,:,j) = science_image_data;
-
-            %displayAdjustedImage(science_image_data)
-            %title("Calibrated Image: " + string(j))
-            %figure
         end
+
         %Shifting The Images
         shifted_calibrated_science_images = shiftImages(shifts_filename,calibrated_science_images);
 
@@ -74,5 +75,10 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
 
         %Co-Adding the shifted, calibrated science image
         combined_calibrated_science_images(:,:,i) = MultiCoAdd(shifted_calibrated_science_images);
+        folder_path = science_image_folders(:,i).folder
+        folder_path_names = split(folder_path,"\")
+        filter_name = string(folder_path_names(end))
+        mkdir(target_folder_path + filter_name)
+        wfits(combined_calibrated_science_images(:,:,i),target_folder_path + filter_name + "\" + generic_filename + "_" + filter_name + ".fit")
     end
 end

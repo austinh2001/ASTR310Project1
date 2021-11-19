@@ -1,6 +1,6 @@
 %% Calibration Testing
 date = "10-27-2021";
-calibrated_science_images = calibrateScienceImages("Observations\" + date + "\","Image-shifts-" + date);
+calibrated_science_images = calibrateScienceImages("Observations\" + date + "\","Image-shifts-" + date,"Calibrated Images\",date + " Calibrated Image");
 calibrated_Ha_M27_image = calibrated_science_images(:,:,1);
 calibrated_OIII_M27_image = calibrated_science_images(:,:,2);
 wfits(calibrated_Ha_M27_image,"calibrated_Ha_M27_" + date + ".fit")
