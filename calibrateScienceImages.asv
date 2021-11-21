@@ -47,7 +47,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     normalized_master_filter_flats = flat_template_image;
 
     for j=1:length(number_of_flat_filter_folders)
-        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_dark,filter_exposure_time_correction_factors(j));
+        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_bias,master_dark,filter_exposure_time_correction_factors(j));
         normalized_master_filter_flats(:,:,j) = normalizeMasterFlat(master_filter_flats(:,:,j));
     end
     
@@ -65,18 +65,30 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     for i=1:number_of_science_image_filters
         calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
         for j=1:science_image_folders_size(1)
-            %Get Directory,Name,F
+            %Get Directory,Name,FITS File, and Image Data from current
+            %science image
             science_image_directory = science_image_folders(j,i).folder;
             science_image_filename = science_image_folders(j,i).name;
             science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
             science_image_data = science_image_fits.data;
+
+            %Calculate the exposure time correction factor between the
+            %science image and the dark image
             exposure_time_correction_factor = science_image_fits.exposure/dark_exposure;
+
+            %Subtracting the master bias
+            %science_image_data = science_image_data - master_bias;
+            %Subtract the bias-subtracted master dark image
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);
+
+            %Divide the normalized master flat for the current filter
             science_image_data = science_image_data / normalized_master_filter_flats(i);
+
+            %Store the calibrated image
             calibrated_science_images(:,:,j) = science_image_data;
         end
 
-        %Shifting The Images
+        %Shifting The Calibrated Images
         shifts_file_path = getFromPath(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\");
         shifts_filename = shifts_file_path.name;
         shifted_calibrated_science_images = shiftImages(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);    

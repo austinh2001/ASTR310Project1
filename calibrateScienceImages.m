@@ -47,7 +47,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     normalized_master_filter_flats = flat_template_image;
 
     for j=1:length(number_of_flat_filter_folders)
-        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_dark,filter_exposure_time_correction_factors(j));
+        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_bias,master_dark,filter_exposure_time_correction_factors(j));
         normalized_master_filter_flats(:,:,j) = normalizeMasterFlat(master_filter_flats(:,:,j));
     end
     
@@ -75,6 +75,9 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             %Calculate the exposure time correction factor between the
             %science image and the dark image
             exposure_time_correction_factor = science_image_fits.exposure/dark_exposure;
+
+            %Subtracting the master bias
+            science_image_data = science_image_data - master_bias;
 
             %Subtract the bias-subtracted master dark image
             science_image_data = science_image_data - (exposure_time_correction_factor * master_dark);

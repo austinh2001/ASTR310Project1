@@ -1,4 +1,4 @@
-function [threshold_image] = threshE(image_data,noise_region,numOfSigma)
+function [threshold_image, threshold] = threshE(image_data,noise_region,numOfSigma,display)
 
 %{
 ThreshE adaptations by Team CANS
@@ -17,9 +17,15 @@ for i=1:image_size(1)
 end
 
 % Displaying Threshold Image
-displayAdjustedImage(rot90(threshold_image),3)
-title(string(numOfSigma) + " Sigma " + "Threshold Image");
-axis fill
-set(gca,'dataAspectRatio',[1 1 1])
+if (nargin==3), display=false; end
+
+if(display)
+    figure
+    displayAdjustedImage(threshold_image,0)
+    title(string(numOfSigma) + " Sigma " + "Threshold Image");
+    axis fill
+    set(gca,'dataAspectRatio',[1 1 1])
+end
+
 end
 
