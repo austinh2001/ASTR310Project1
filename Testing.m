@@ -40,7 +40,7 @@ date = "10-27-2021";
 calibrated_Ha_M27_image = rfits("calibrated_Ha_M27_" + date + ".fit");
 calibrated_OIII_M27_image = rfits("calibrated_OIII_M27_" + date + ".fit");
 sky_noise_region = [[1100,700] ; [1300,900]];
-numOfSigma = 1.65;
+numOfSigma = 5;
 threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
 imshow(colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],numOfSigma))
 title("Colorized-" + string(numOfSigma) + "σ Threshold of Hα: " + date)

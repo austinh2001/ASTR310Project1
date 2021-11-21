@@ -3,8 +3,8 @@ image_data = rot90(image_data,-1);
 image_data = fliplr(image_data);
 %Modified version of:
 %https://www.mathworks.com/matlabcentral/answers/42434-how-to-increase-the-contrast-in-an-image-using-imagesc-with-removal-of-outliers
-if (nargin==1), numOfSigma=3; end
-if(numOfSigma >= 0)
+if (nargin==1), numOfSigma=1; end
+if(numOfSigma > 0)
     ndev = numOfSigma;
     data_mean = mean(image_data(:));
     data_std = std(image_data(:));
