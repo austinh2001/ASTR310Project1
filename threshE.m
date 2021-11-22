@@ -1,31 +1,36 @@
-function [threshold_image, threshold] = threshE(image_data,noise_region,numOfSigma,display)
+function [threshold_image, threshold] = threshE(im,col,row,rad1,rad2,degrees_angle,noise_region,numOfSigma)
 
 %{
-ThreshE adaptations by Team CANS
+AperE Original code by Professor Andrew Harris. Edited by Alyssa Pagan
+%} 
+
+%{
+ThreshE adaptations from AperE by Team CANS
 %}
 
 %Find the threshold value, as determined by the noise region
-threshold = calculateThreshold(image_data,noise_region,numOfSigma);
-threshold_image = zeros(size(image_data));
-image_size = size(threshold_image);
+threshold = calculateThreshold(im,noise_region,numOfSigma);
+threshold_image = zeros(size(im));
 
-for i=1:image_size(1)
-    for j=1:image_size(2)
-        if(image_data(i,j) >= threshold)
-            threshold_image(i,j) = image_data(i,j);
+[a,b]=size(im);
+[xx,yy]=meshgrid(1:b,1:a);
+
+% Figure out how to rotate the ellipse in this context
+%alpha = degrees_angle * (pi/180);
+%R  = [cos(alpha) -sin(alpha); sin(alpha)  cos(alpha)];
+%size(xx)
+%rotatedXY = R*[xx'; yy'];
+%xr = rotatedXY(1,:)';
+%yr = rotatedXY(2,:)';
+
+ixsrc=(((xx-col)./rad1).^2)+(((yy-row)./rad2).^2)<=1;
+
+for i=1:a
+    for j=1:b
+        if(im(i,j) >= threshold && ixsrc(i,j))
+            threshold_image(i,j) = im(i,j);
         end
     end
-end
-
-% Displaying Threshold Image
-if (nargin==3), display=false; end
-
-if(display)
-    figure
-    displayAdjustedImage(threshold_image,0)
-    title(string(numOfSigma) + " Sigma " + "Threshold Image");
-    axis fill
-    set(gca,'dataAspectRatio',[1 1 1])
 end
 
 end
