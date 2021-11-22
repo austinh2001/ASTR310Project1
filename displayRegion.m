@@ -5,7 +5,7 @@ function [] = displayRegion(region)
     region = sort(region);
    
     hold on
-    rectangle("Position",[region(1,1),region(1,2),region(2,1)-region(1,1),region(2,2)-region(1,2)],"EdgeColor","b")   
+    rectangle("Position",[region(1,1),region(1,2),abs(region(2,1)-region(1,1)),abs(region(2,2)-region(1,2))],"EdgeColor","b")   
     hold off
 end
 

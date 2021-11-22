@@ -62,8 +62,12 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
     science_image_folders_size = size(science_image_folders);
     number_of_science_image_filters = science_image_folders_size(2);
     combined_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
+    combined_calibrated_science_images = rot90(combined_calibrated_science_images,-1);
+    combined_calibrated_science_images = fliplr(combined_calibrated_science_images);
     for i=1:number_of_science_image_filters
         calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
+        calibrated_science_images = rot90(calibrated_science_images,-1);
+        calibrated_science_images = fliplr(calibrated_science_images);
         for j=1:science_image_folders_size(1)
             %Get Directory,Name,FITS File, and Image Data from current
             %science image
@@ -86,6 +90,8 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             science_image_data = science_image_data / normalized_master_filter_flats(i);
 
             %Store the calibrated image
+            science_image_data = rot90(science_image_data,-1);
+            science_image_data = fliplr(science_image_data);
             calibrated_science_images(:,:,j) = science_image_data;
         end
 
