@@ -21,7 +21,9 @@ displayRegion(sky_noise_region)
 % applied to each science image and then shifted to form the seen pattern
 
 % Each dark image has the same hot pixels, indicating that these might be
-% due to the ccd rather than a cosmic ray
+% due to the ccd rather than cosmic rays. The subtraction of these values
+% in the science image result in a hot/cold pixel (depending on resulting
+% ADU value)
 
 %% threshE Testing
 calibrated_Ha_M27_image = rfits("Calibrated Images\Ha\" + date + "_calibrated_image_Ha"+ ".fit");
@@ -50,3 +52,6 @@ figure
 imshow(coadded_threshold_colorized_calibrated_images)
 title("Colorized-" + string(numOfSigma) + "σ Threshold of Hα & OIII: " + date)
 %createVaryingThresholdVideo(calibrated_Ha_M27_image.data,sky_noise_region,5,10)
+
+%% Star Removal
+
