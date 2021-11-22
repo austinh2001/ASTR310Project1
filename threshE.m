@@ -8,6 +8,7 @@ ThreshE adaptations by Team CANS
 threshold = calculateThreshold(image_data,noise_region,numOfSigma);
 threshold_image = zeros(size(image_data));
 image_size = size(threshold_image);
+
 for i=1:image_size(1)
     for j=1:image_size(2)
         if(image_data(i,j) >= threshold)
