@@ -106,6 +106,17 @@ calibrated_OIII_M27_image_09_26_2021 = rfits("Calibrated Images\OIII\" + "09-26-
 
 calibrated_Ha_M27_image_10_27_2021 = rfits("Calibrated Images\Ha\" + "10-27-2021" + "_calibrated_image_Ha"+ ".fit");
 calibrated_OIII_M27_image_10_27_2021 = rfits("Calibrated Images\OIII\" + "10-27-2021" + "_calibrated_image_OIII"+ ".fit");
-
-final_Ha = CoAdd(CoAdd(calibrated_Ha_M27_image_09_24_2021.data,calibrated_Ha_M27_image_09_26_2021.data),calibrated_Ha_M27_image_10_27_2021.data);
-displayAdjustedImage(final_Ha,5)
+figure
+displayAdjustedImage(calibrated_Ha_M27_image_09_24_2021.data)
+observation_Ha_image_data_array = cat(3,calibrated_Ha_M27_image_09_24_2021.data,calibrated_Ha_M27_image_09_26_2021.data);
+size(observation_Ha_image_data_array)
+observation_Ha_image_data_array = shiftImages("Observation_Shifts.xlsx",observation_Ha_image_data_array);
+figure
+displayAdjustedImage(calibrated_Ha_M27_image_09_24_2021.data)
+figure
+displayAdjustedImage(calibrated_Ha_M27_image_09_26_2021.data)
+figure
+displayAdjustedImage(calibrated_Ha_M27_image_10_27_2021.data)
+final_Ha = MultiCoAdd(observation_Ha_image_data_array);
+figure
+displayAdjustedImage(final_Ha)
