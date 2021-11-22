@@ -6,6 +6,8 @@ writerObj.FrameRate = length(sigmas)/video_length;
 open(writerObj);
 for i=1:length(sigmas)
     threshold_image = threshE(image_data,noise_region,sigmas(i));
+    displayImage(threshold_image)
+    title(string(sigmas(i)) + " σ " + "Threshold Image");
     writeVideo(writerObj, getframe(gcf))
     display(string((i/totalFrames)*100) + " %")
 end
