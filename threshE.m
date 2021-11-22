@@ -16,15 +16,8 @@ threshold_image = zeros(size(im));
 [xx,yy]=meshgrid(1:b,1:a);
 
 % Figure out how to rotate the ellipse in this context
-%alpha = degrees_angle * (pi/180);
-%R  = [cos(alpha) -sin(alpha); sin(alpha)  cos(alpha)];
-%size(xx)
-%rotatedXY = R*[xx'; yy'];
-%xr = rotatedXY(1,:)';
-%yr = rotatedXY(2,:)';
-
-ixsrc=(((xx-col)./rad1).^2)+(((yy-row)./rad2).^2)<=1;
-
+alpha = degrees_angle * (pi/180);
+ixsrc=(((cos(alpha).*(xx-col)+sin(alpha).*(yy-row))./rad1).^2+(((sin(alpha).*(xx-col)-cos(alpha).*(yy-row))./rad2).^2))<=1;
 for i=1:a
     for j=1:b
         if(im(i,j) >= threshold && ixsrc(i,j))

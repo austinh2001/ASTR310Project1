@@ -22,8 +22,10 @@ function [] = createEllipse(col,row,rad1,rad2,degrees_angle)
     rotatedXY = R*[x'; y'];
     xr = rotatedXY(1,:)';
     yr = rotatedXY(2,:)';
+    colorArray = ['r','g','b']
+    randomIndex = randi(length(colorArray), 1)
     hold on
-    plot(xr+center_coordinates(1),yr+center_coordinates(2),'r');
+    plot(xr+center_coordinates(1),yr+center_coordinates(2),colorArray(randomIndex));
     hold off
 end
 
