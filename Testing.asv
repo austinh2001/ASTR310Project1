@@ -26,18 +26,26 @@ displayRegion(sky_noise_region)
 % ADU value)
 
 %% threshE Testing
-date = "10-27-2021";
+display("Calibrated Images\Ha\" + date + "_calibrated_image_Ha"+ ".fit")
 calibrated_Ha_M27_image = rfits("Calibrated Images\Ha\" + date + "_calibrated_image_Ha"+ ".fit");
 calibrated_OIII_M27_image = rfits("Calibrated Images\OIII\" + date + "_calibrated_image_OIII"+ ".fit");
 sky_noise_region = [[1100,700] ; [1300,900]];
 numOfSigma = 5;
 
-Ha_cutoff_ADU = 4000;
 threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
 [colorized_threshold_calibrated_Ha_M27_image,Ha_colorObject] = colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],Ha_cutoff_ADU);
 imshow(colorized_threshold_calibrated_Ha_M27_image)
 createColorbar(Ha_colorObject,"ADU Counts")
 createEllipse()
+
+Ha_cutoff_ADU = 4000;
+threshold_calibrated_Ha_M27_image = threshE(calibrated_Ha_M27_image.data,sky_noise_region,numOfSigma);
+[colorized_threshold_calibrated_Ha_M27_image,Ha_colorObject] = colorizeImage(threshold_calibrated_Ha_M27_image,[1,0,0],Ha_cutoff_ADU);
+figure
+imshow(colorized_threshold_calibrated_Ha_M27_image)
+createColorbar(Ha_colorObject,"ADU Counts")
+hold on
+
 title("Colorized-" + string(numOfSigma) + "σ Threshold of Hα: " + date)
 
 OIII_cutoff_ADU = 2000;
@@ -46,7 +54,6 @@ threshold_calibrated_OIII_M27_image = threshE(calibrated_OIII_M27_image.data,sky
 figure
 imshow(colorized_threshold_calibrated_OIII_M27_image)
 createColorbar(OIII_colorObject,"ADU Counts")
-createEllipse()
 title("Colorized-" + string(numOfSigma) + "σ Threshold of OIII: " + date)
 
 coadded_threshold_colorized_calibrated_images = CoAdd(colorized_threshold_calibrated_Ha_M27_image,colorized_threshold_calibrated_OIII_M27_image);
