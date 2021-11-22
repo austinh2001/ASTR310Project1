@@ -23,20 +23,7 @@ displayRegion(sky_noise_region)
 % Each dark image has the same hot pixels, indicating that these might be
 % due to the ccd rather than a cosmic ray
 
-%% Display Testing
-colorized_calibrated_Ha_M27_image = colorizeImage(calibrated_Ha_M27_image,[1,0,0],5);
-displayAdjustedImage(colorized_calibrated_Ha_M27_image,-1)
-title("Colorized Hα: "+ date)
-figure
-colorized_calibrated_OIII_M27_image = colorizeImage(calibrated_OIII_M27_image,[0,1,0],5);
-displayAdjustedImage(colorized_calibrated_OIII_M27_image,-1)
-title("Colorized OIII: "+ date)
-figure
-coadded_calibrated_images = CoAdd(colorized_calibrated_Ha_M27_image,colorized_calibrated_OIII_M27_image);
-displayAdjustedImage(coadded_calibrated_images,-1)
-title("CoAdded Colorized Hα & OIII: " + date)
 %% threshE Testing
-date = "10-27-2021";
 calibrated_Ha_M27_image = rfits("Calibrated Images\Ha\" + date + "_calibrated_image_Ha"+ ".fit");
 calibrated_OIII_M27_image = rfits("Calibrated Images\OIII\" + date + "_calibrated_image_OIII"+ ".fit");
 sky_noise_region = [[1100,700] ; [1300,900]];
@@ -62,4 +49,4 @@ coadded_threshold_colorized_calibrated_images = CoAdd(colorized_threshold_calibr
 figure
 imshow(coadded_threshold_colorized_calibrated_images)
 title("Colorized-" + string(numOfSigma) + "σ Threshold of Hα & OIII: " + date)
-createVaryingThresholdVideo(calibrated_Ha_M27_image.data,sky_noise_region,5,10)
+%createVaryingThresholdVideo(calibrated_Ha_M27_image.data,sky_noise_region,5,10)
