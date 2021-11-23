@@ -86,18 +86,23 @@ displayImage(thresholdImage)
 createEllipse(nebula_center_coordinates(1),nebula_center_coordinates(2),nebula_major_radius,nebula_minor_radius,degrees_angle)
 %% Star Removal
 
-calibrated_Ha_M27_image = rfits("Calibrated Images\Ha\" + testing_date + "_calibrated_image_Ha"+ ".fit");
-calibrated_OIII_M27_image = rfits("Calibrated Images\OIII\" + testing_date + "_calibrated_image_OIII"+ ".fit");
+calibrated_OIII_M27_image_1 = rfits("Calibrated Images\OIII\" + "09-24-2021" + "_calibrated_image_OIII"+ ".fit");
+calibrated_OIII_M27_image_2 = rfits("Calibrated Images\OIII\" + "09-26-2021" + "_calibrated_image_OIII"+ ".fit");
 
-numOfSigma = 3
+numOfSigma = 5
 figure
-displayAdjustedImage(calibrated_Ha_M27_image.data,numOfSigma)
-calibrated_Ha_M27_star_removed_image = removeStars(calibrated_Ha_M27_image.data,"Ha_Star_Centers.xlsx");
+displayAdjustedImage(calibrated_OIII_M27_image_1.data,numOfSigma)
 figure
-displayAdjustedImage(calibrated_Ha_M27_star_removed_image,numOfSigma)
-2.
-%% Brightness Comparison
+displayAdjustedImage(calibrated_OIII_M27_image_2.data,numOfSigma)
+calibrated_OIII_M27_star_removed_image = removeStars(calibrated_OIII_M27_image_2.data,"Star_Centers_09-26-2021.xlsx");
+figure
+displayAdjustedImage(calibrated_OIII_M27_star_removed_image,numOfSigma)
+
+%% Size/Brightness Comparison
 % 2.5 sigma to 4.5 sigma (for both Ha and OIII?)
+egain = 2.5999999046325684
+kccd = 1/egain
+
 calibrated_Ha_M27_image_09_24_2021 = rfits("Calibrated Images\Ha\" + "09-24-2021" + "_calibrated_image_Ha"+ ".fit");
 calibrated_OIII_M27_image_09_24_2021 = rfits("Calibrated Images\OIII\" + "09-24-2021" + "_calibrated_image_OIII"+ ".fit");
 
@@ -106,17 +111,44 @@ calibrated_OIII_M27_image_09_26_2021 = rfits("Calibrated Images\OIII\" + "09-26-
 
 calibrated_Ha_M27_image_10_27_2021 = rfits("Calibrated Images\Ha\" + "10-27-2021" + "_calibrated_image_Ha"+ ".fit");
 calibrated_OIII_M27_image_10_27_2021 = rfits("Calibrated Images\OIII\" + "10-27-2021" + "_calibrated_image_OIII"+ ".fit");
-figure
-displayAdjustedImage(calibrated_Ha_M27_image_09_24_2021.data)
+numOfSigma = 5
+%Ha
 observation_Ha_image_data_array = cat(3,calibrated_Ha_M27_image_09_24_2021.data,calibrated_Ha_M27_image_09_26_2021.data);
 size(observation_Ha_image_data_array)
 observation_Ha_image_data_array = shiftImages("Observation_Shifts.xlsx",observation_Ha_image_data_array);
+final_Ha_image = MultiCoAdd(observation_Ha_image_data_array);
+final_Ha_center_coordinates = [643,459];
+final_Ha_major_radius = 560;
+final_Ha_minor_radius = 430;
+degrees_angle = -30
+sky_noise_region = [[1100,700] ; [1300,900]];
+[final_Ha_threshold_image, Ha_angular_area,Ha_flux,Ha_flux_error] = threshE(final_Ha_image,final_Ha_center_coordinates(1),final_Ha_center_coordinates(2),final_Ha_major_radius,final_Ha_minor_radius,degrees_angle,sky_noise_region,numOfSigma,kccd);
 figure
-displayAdjustedImage(calibrated_Ha_M27_image_09_24_2021.data)
+displayImage(final_Ha_threshold_image)
+createEllipse(final_Ha_center_coordinates(1),final_Ha_center_coordinates(2),final_Ha_major_radius,final_Ha_minor_radius,degrees_angle)
+
+%OIII
+observation_OIII_image_data_array = cat(3,calibrated_OIII_M27_image_09_24_2021.data,calibrated_OIII_M27_image_09_26_2021.data);
+OIII_size = size(observation_OIII_image_data_array)
+observation_Ha_image_data_array = shiftImages("Observation_Shifts.xlsx",observation_OIII_image_data_array);
+final_OIII_image = MultiCoAdd(observation_OIII_image_data_array);
+final_OIII_center_coordinates = [643,459];
+final_OIII_major_radius = 560;
+final_OIII_minor_radius = 430;
+degrees_angle = -30;
+sky_noise_region = [[1100,700] ; [1300,900]];
+[final_OIII_threshold_image,OIII_angular_area,OIII_flux,OIII_flux_error] = threshE(final_OIII_image,final_OIII_center_coordinates(1),final_OIII_center_coordinates(2),final_OIII_major_radius,final_OIII_minor_radius,degrees_angle,sky_noise_region,numOfSigma,kccd);
 figure
-displayAdjustedImage(calibrated_Ha_M27_image_09_26_2021.data)
-figure
-displayAdjustedImage(calibrated_Ha_M27_image_10_27_2021.data)
-final_Ha = MultiCoAdd(observation_Ha_image_data_array);
-figure
-displayAdjustedImage(final_Ha)
+displayImage(final_OIII_threshold_image)
+createEllipse(final_OIII_center_coordinates(1),final_OIII_center_coordinates(2),final_OIII_major_radius,final_OIII_minor_radius,degrees_angle)
+
+display("OIII/HA Size Ratio: " + string(OIII_angular_area/Ha_angular_area))
+Ha_instrumental_mag = -2.5*log10(Ha_flux/600)
+Ha_instrumental_mag_error = (-2.5*Ha_flux_error)/(log(10)*Ha_flux)
+OIII_instrumental_mag = -2.5*log10(OIII_flux/600)
+OIII_instrumental_mag_error = (-2.5*OIII_flux_error)/(log(10)*OIII_flux)
+display("OIII instrumental magnitude: " + string(OIII_instrumental_mag))
+display("OIII instrumental magnitude error: " + string(OIII_instrumental_mag_error))
+display("Ha instrumental magnitude: " + string(Ha_instrumental_mag))
+display("Ha instrumental magnitude error: " + string(Ha_instrumental_mag_error))
+display("% Difference of instrumental magnitude: " + string((Ha_instrumental_mag-OIII_instrumental_mag)/(Ha_instrumental_mag)*100))

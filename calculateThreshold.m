@@ -1,4 +1,4 @@
-function [thresholdADU] = calculateThreshold(image_data,region,numOfSigma)
+function [thresholdADU,skyNoiseMu,skyNoiseRegion] = calculateThreshold(image_data,region,numOfSigma)
 % Region is defined as two opposite points of a rectangular area
 
 % Sorting the column vectors (corresponds to the vector of x values and a
