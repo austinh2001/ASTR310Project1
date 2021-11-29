@@ -58,8 +58,8 @@ figure
 displayImage(coadded_threshold_colorized_calibrated_images)
 title("Colorized-" + string(numOfSigma) + "σ Threshold of Hα & OIII: " + testing_date)
 
-%title_prefix = "Ha"
-%createVaryingThresholdVideo(calibrated_Ha_M27_image.data,title_prefix,sky_noise_region,5,10)
+title_prefix = "OIII"
+createVaryingThresholdVideo(calibrated_OIII_M27_image.data,title_prefix,sky_noise_region,5,10)
 
 % We can see the central white dwarf in OIII and not in Ha
 % This helps us understand that the OIII is more within the interior while

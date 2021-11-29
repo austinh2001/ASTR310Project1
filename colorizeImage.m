@@ -11,9 +11,9 @@ function [color_normalized_image_RGB_data,colorObject] = colorizeImage(image_dat
     color_normalized_image_RGB_data = cat(3,normalized_image_data*R,normalized_image_data*G,normalized_image_data*B);
     
     %Create an generic colormap for your color 
-    R_map = linspace(0,1,255) * R;
-    G_map = linspace(0,1,255) * G;
-    B_map = linspace(0,1,255) * B;
+    R_map = linspace(0,1,cutoffADU) * R;
+    G_map = linspace(0,1,cutoffADU) * G;
+    B_map = linspace(0,1,cutoffADU) * B;
     c_map = [R_map',G_map',B_map'];
     limits = [0,cutoffADU];
     colorObject = {c_map,limits};

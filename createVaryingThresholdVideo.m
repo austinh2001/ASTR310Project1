@@ -7,6 +7,7 @@ open(writerObj);
 for i=1:length(sigmas)
     threshold_image = threshImage(image_data,noise_region,sigmas(i));
     displayAdjustedImage(threshold_image,3)
+    colormap("gray")
     title(string(sigmas(i)) + " σ " + "Threshold Image");
     writeVideo(writerObj, getframe(gcf))
     display(string((i/totalFrames)*100) + " %")
