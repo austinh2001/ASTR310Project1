@@ -23,7 +23,6 @@ calibrated_Ha_M27_image_second_observation = calibrated_science_images_second_ob
 calibrated_OIII_M27_image_second_observation = calibrated_science_images_second_observation(:,:,2);
 
 % Remove Stars
-
 calibrated_Ha_M27_image_first_observation = removeStars(calibrated_Ha_M27_image_first_observation,"Star_Centers_09-24-2021.xlsx");
 calibrated_OIII_M27_image_first_observation = removeStars(calibrated_OIII_M27_image_first_observation,"Star_Centers_09-24-2021.xlsx");
 
@@ -40,8 +39,8 @@ min_sigma_Ha = 2.5;
 max_sigma_Ha = 4.5;
 mean_sigma_Ha = mean([min_sigma_Ha,max_sigma_Ha]);
 
-min_sigma_OIII = 1.5;
-max_sigma_OIII = 3.5;
+min_sigma_OIII = 2.5;
+max_sigma_OIII = 4.5;
 mean_sigma_OIII = mean([min_sigma_OIII,max_sigma_OIII]);
 
 % Combine both observation nights by filter into image data arrays
@@ -81,11 +80,11 @@ degrees_angle = -30;
 [OIII_threshold_image_max, OIII_angular_area_max,OIII_flux_max,OIII_flux_error_max,OIII_threshold_ADU_max] = threshE(calibrated_OIII_image,OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle,sky_noise_region,max_sigma_OIII,kccd);
 OIII_angular_area_error_lower = OIII_angular_area_min - OIII_angular_area_mean;
 OIII_angular_area_error_upper = OIII_angular_area_mean - OIII_angular_area_max;
-display("Ha Thresholds: " + " Min: " + string(Ha_threshold_ADU_min) + " Mean: " + string(Ha_threshold_ADU_mean) + " Max: " + string(Ha_threshold_ADU_max))
-display("OIII Thresholds: " + " Min: " + string(OIII_threshold_ADU_min) + " Mean: " + string(OIII_threshold_ADU_mean) + " Max: " + string(OIII_threshold_ADU_max))
+display("Ha Thresholds: " + " Inner: " + string(Ha_threshold_ADU_max) + " Mean: " + string(Ha_threshold_ADU_mean) + " Outer: " + string(Ha_threshold_ADU_min))
+display("OIII Thresholds: " + " Inner: " + string(OIII_threshold_ADU_max) + " Mean: " + string(OIII_threshold_ADU_mean) + " Outer: " + string(OIII_threshold_ADU_min))
 display("OIII/HA Size Ratio: " + string(OIII_angular_area_mean/Ha_angular_area_mean))
-display("Ha Sizes: " + " Min: " + string(Ha_angular_area_min) + " Mean: " + string(Ha_angular_area_mean) + " Max: " + string(Ha_angular_area_max))
-display("OIII Sizes: " + " Min: " + string(OIII_angular_area_min) + " Mean: " + string(OIII_angular_area_mean) + " Max: " + string(OIII_angular_area_max))
+display("Ha Sizes: " + " Inner: " + string(Ha_angular_area_max) + " Mean: " + string(Ha_angular_area_mean) + " Outer: " + string(Ha_angular_area_min))
+display("OIII Sizes: " + " Inner: " + string(OIII_angular_area_max) + " Mean: " + string(OIII_angular_area_mean) + " Outer: " + string(OIII_angular_area_min))
 display("Ha Size: " + string(Ha_angular_area_mean) + "+" + string(Ha_angular_area_error_upper) + "/-" + string(Ha_angular_area_error_lower))
 display("OIII Size: " + string(OIII_angular_area_mean) + "+" + string(OIII_angular_area_error_upper) + "/-" + string(OIII_angular_area_error_lower))
 if(OIII_angular_area_mean > Ha_angular_area_mean)
@@ -97,18 +96,21 @@ Ha_instrumental_mag = -2.5*log10(Ha_flux_mean/600);
 Ha_instrumental_mag_error = (-2.5*Ha_flux_error_mean)/(log(10)*Ha_flux_mean);
 OIII_instrumental_mag = -2.5*log10(OIII_flux_mean/600);
 OIII_instrumental_mag_error = (-2.5*OIII_flux_error_mean)/(log(10)*OIII_flux_mean);
-display("OIII instrumental magnitude: " + string(OIII_instrumental_mag) + "±" + string(OIII_instrumental_mag_error))
 display("Ha instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
+display("OIII instrumental magnitude: " + string(OIII_instrumental_mag) + "±" + string(OIII_instrumental_mag_error))
 display("% Difference of instrumental magnitude: " + string((Ha_instrumental_mag-OIII_instrumental_mag)/(Ha_instrumental_mag)*100))
 if(OIII_instrumental_mag < Ha_instrumental_mag)
     display("OIII is brighter than Ha")
 else
     display("Ha is brighter than OIII")
 end
+
 figure
 displayAdjustedImage(Ha_threshold_image_mean,3)
+title("M27 " + mean_sigma_Ha + "σ " + "Threshold Image (3σ Contrast Adjustment)")
 figure
 displayAdjustedImage(OIII_threshold_image_mean,3)
+title("M27 " + mean_sigma_OIII + "σ " + "Threshold Image (3σ Contrast Adjustment)")
 
 Ha_cutoff_ADU = 4000;
 [colorized_Ha_threshold_image_mean,Ha_colorObject] = colorizeImage(Ha_threshold_image_mean,[1,0,0],Ha_cutoff_ADU);

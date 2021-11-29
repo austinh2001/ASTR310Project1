@@ -47,7 +47,7 @@ total_pixel_area = pixel_area*pixel_count;
 pixel_angular_area = total_pixel_area * plate_scale_area;
 
 % arc minute^2
-pixel_angular_area = pixel_angular_area / (60^2)
+pixel_angular_area = pixel_angular_area / (60^2);
 
 sky=skyNoiseMu;                              % sky value
 pix=threshold_image(ixsrc)-sky;              % source without sky
