@@ -1,7 +1,7 @@
 % Provide the dates of observation which will be used in this analysis
 dates = ["09-24-2021","09-26-2021"];
 
-% Create the folder path string for each observation nigh and the calibrated
+% Create the folder path string for each observation night and the calibrated
 % images
 data_folder_paths = "Observations\" + dates + "\";
 calibrated_images_folder_path = "Calibrated Images\";
@@ -30,7 +30,7 @@ calibrated_OIII_M27_image_first_observation = removeStars(calibrated_OIII_M27_im
 calibrated_Ha_M27_image_second_observation = removeStars(calibrated_Ha_M27_image_second_observation,"Star_Centers_09-26-2021.xlsx");
 calibrated_OIII_M27_image_second_observation = removeStars(calibrated_OIII_M27_image_second_observation,"Star_Centers_09-26-2021.xlsx");
 
-% Egain and Kccd of CCD
+% Egain and Kccd of CCD (taken from FITS header of images)
 egain = 2.5999999046325684;
 kccd = 1/egain;
 
@@ -88,8 +88,10 @@ display("Ha Sizes: " + " Min: " + string(Ha_angular_area_min) + " Mean: " + stri
 display("OIII Sizes: " + " Min: " + string(OIII_angular_area_min) + " Mean: " + string(OIII_angular_area_mean) + " Max: " + string(OIII_angular_area_max))
 display("Ha Size: " + string(Ha_angular_area_mean) + "+" + string(Ha_angular_area_error_upper) + "/-" + string(Ha_angular_area_error_lower))
 display("OIII Size: " + string(OIII_angular_area_mean) + "+" + string(OIII_angular_area_error_upper) + "/-" + string(OIII_angular_area_error_lower))
-if(OIII_angular_area_mean/Ha_angular_area_mean > 1)
+if(OIII_angular_area_mean > Ha_angular_area_mean)
     display("OIII is larger than Ha")
+else
+    display("Ha is larger than OIII")
 end
 Ha_instrumental_mag = -2.5*log10(Ha_flux_mean/600);
 Ha_instrumental_mag_error = (-2.5*Ha_flux_error_mean)/(log(10)*Ha_flux_mean);
@@ -98,6 +100,11 @@ OIII_instrumental_mag_error = (-2.5*OIII_flux_error_mean)/(log(10)*OIII_flux_mea
 display("OIII instrumental magnitude: " + string(OIII_instrumental_mag) + "±" + string(OIII_instrumental_mag_error))
 display("Ha instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
 display("% Difference of instrumental magnitude: " + string((Ha_instrumental_mag-OIII_instrumental_mag)/(Ha_instrumental_mag)*100))
+if(OIII_instrumental_mag < Ha_instrumental_mag)
+    display("OIII is brighter than Ha")
+else
+    display("Ha is brighter than OIII")
+end
 figure
 displayAdjustedImage(Ha_threshold_image_mean,3)
 figure
