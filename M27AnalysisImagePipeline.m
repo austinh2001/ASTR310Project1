@@ -13,9 +13,20 @@ generic_filenames = dates + "_calibrated_image";
 sky_noise_region = [[1100,700] ; [1300,900]];
 
 % First Observation Night: 09-24-2021
+
 calibrated_science_images_first_observation = calibrateScienceImages(data_folder_paths(1),calibrated_images_folder_path,generic_filenames(1));
 calibrated_Ha_M27_image_first_observation = calibrated_science_images_first_observation(:,:,1);
 calibrated_OIII_M27_image_first_observation = calibrated_science_images_first_observation(:,:,2);
+
+figure
+[calibrated_Ha_M27_image_first_observation_grayscale, grayscale_color_object] = colorizeImage(calibrated_Ha_M27_image_first_observation,[128,128,128],4000);
+displayImage(calibrated_Ha_M27_image_first_observation_grayscale)
+title("M27 Ha Calibrated Image: 9/24/2021")
+
+figure
+[calibrated_OIII_M27_image_first_observation_grayscale, grayscale_color_object] = colorizeImage(calibrated_OIII_M27_image_first_observation,[128,128,128],2000);
+displayImage(calibrated_OIII_M27_image_first_observation_grayscale)
+title("M27 OIII Calibrated Image: 9/24/2021")
 
 % Second Observation Night: 09-26-2021
 calibrated_science_images_second_observation = calibrateScienceImages(data_folder_paths(2),calibrated_images_folder_path,generic_filenames(2));
@@ -66,7 +77,7 @@ degrees_angle = -30;
 figure
 displayAdjustedImage(calibrated_Ha_image,3)
 displayRegion(sky_noise_region)
-title("M27 Ha Calibrated Image")
+title("M27 Ha Calibrated-Multi-Night Image")
 createEllipse(Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle)
 colormap("gray")
 
@@ -74,19 +85,19 @@ colormap("gray")
 figure
 displayImage(Ha_threshold_image_min)
 displayRegion(sky_noise_region)
-title("M27 Ha Threshold Image- Outer Boundary: " + string(min_sigma_Ha) + "σ")
+title("M27 Ha Calibrated-Threshold-Multi-Night Image- Outer Boundary: " + string(min_sigma_Ha) + "σ")
 createEllipse(Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle)
 [Ha_threshold_image_mean, Ha_angular_area_mean,Ha_flux_mean,Ha_flux_error_mean,Ha_threshold_ADU_mean] = threshE(calibrated_Ha_image,Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle,sky_noise_region,mean_sigma_Ha,kccd);
 figure
 displayImage(Ha_threshold_image_mean)
 displayRegion(sky_noise_region)
-title("M27 Ha Threshold Image: " + string(mean_sigma_Ha) + "σ")
+title("M27 Ha Calibrated-Threshold-Multi-Night Image: " + string(mean_sigma_Ha) + "σ")
 createEllipse(Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle)
 [Ha_threshold_image_max, Ha_angular_area_max,Ha_flux_max,Ha_flux_error_max,Ha_threshold_ADU_max] = threshE(calibrated_Ha_image,Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle,sky_noise_region,max_sigma_Ha,kccd);
 figure
 displayImage(Ha_threshold_image_max)
 displayRegion(sky_noise_region)
-title("M27 Ha Threshold Image- Inner Boundary: " + string(max_sigma_Ha) + "σ")
+title("M27 Ha Calibrated-Threshold-Multi-Night Image- Inner Boundary: " + string(max_sigma_Ha) + "σ")
 createEllipse(Ha_center_coordinates(1),Ha_center_coordinates(2),Ha_major_radius,Ha_minor_radius,degrees_angle)
 Ha_angular_area_error_upper = Ha_angular_area_min - Ha_angular_area_mean;
 Ha_angular_area_error_lower = Ha_angular_area_mean - Ha_angular_area_max;
@@ -100,7 +111,7 @@ degrees_angle = -30;
 figure
 displayAdjustedImage(calibrated_OIII_image,3)
 displayRegion(sky_noise_region)
-title("M27 OIII Calibrated Image")
+title("M27 OIII Calibrated-Multi-Night Image")
 createEllipse(OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle)
 colormap("gray")
 
@@ -109,18 +120,18 @@ figure
 displayImage(OIII_threshold_image_min)
 displayRegion(sky_noise_region)
 createEllipse(OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle)
-title("M27 OIII Threshold Image- Outer Boundary: " + string(min_sigma_OIII) + "σ")
+title("M27 OIII Calibrated-Threshold-Multi-Night Image- Outer Boundary: " + string(min_sigma_OIII) + "σ")
 [OIII_threshold_image_mean, OIII_angular_area_mean,OIII_flux_mean,OIII_flux_error_mean,OIII_threshold_ADU_mean] = threshE(calibrated_OIII_image,OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle,sky_noise_region,mean_sigma_OIII,kccd);
 figure
 displayImage(OIII_threshold_image_mean)
 displayRegion(sky_noise_region)
-title("M27 OIII Threshold Image: " + string(mean_sigma_OIII) + "σ")
+title("M27 OIII Calibrated-Threshold-Multi-Night Image: " + string(mean_sigma_OIII) + "σ")
 createEllipse(OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle)
 [OIII_threshold_image_max, OIII_angular_area_max,OIII_flux_max,OIII_flux_error_max,OIII_threshold_ADU_max] = threshE(calibrated_OIII_image,OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle,sky_noise_region,max_sigma_OIII,kccd);
 figure
 displayImage(OIII_threshold_image_max)
 displayRegion(sky_noise_region)
-title("M27 OIII Threshold Image- Inner Boundary: " + string(max_sigma_OIII) + "σ")
+title("M27 OIII Calibrated-Threshold-Multi-Night Image- Inner Boundary: " + string(max_sigma_OIII) + "σ")
 createEllipse(OIII_center_coordinates(1),OIII_center_coordinates(2),OIII_major_radius,OIII_minor_radius,degrees_angle)
 OIII_angular_area_error_lower = OIII_angular_area_min - OIII_angular_area_mean;
 OIII_angular_area_error_upper = OIII_angular_area_mean - OIII_angular_area_max;
@@ -143,6 +154,7 @@ Ha_instrumental_mag_error = (-2.5*Ha_flux_error_mean)/(log(10)*Ha_flux_mean);
 OIII_instrumental_mag = -2.5*log10(OIII_flux_mean/600);
 OIII_instrumental_mag_error = (-2.5*OIII_flux_error_mean)/(log(10)*OIII_flux_mean);
 display("Ha instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
+display("Ha 5 sigma instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
 display("OIII instrumental magnitude: " + string(OIII_instrumental_mag) + "±" + string(OIII_instrumental_mag_error))
 display("% Difference of instrumental magnitude: " + string((Ha_instrumental_mag-OIII_instrumental_mag)/(Ha_instrumental_mag)*100))
 if(OIII_instrumental_mag < Ha_instrumental_mag)

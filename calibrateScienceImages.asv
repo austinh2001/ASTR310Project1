@@ -103,7 +103,7 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
                 if(filter_name == "Ha")
                     cutoff_ADU = 4000;
                 elseif(filter_name == "OIII")
-                    cutoff_ADU = 4000;
+                    cutoff_ADU = 2000;
                 end
 
                 figure
