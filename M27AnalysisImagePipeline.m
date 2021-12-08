@@ -154,7 +154,6 @@ Ha_instrumental_mag_error = (-2.5*Ha_flux_error_mean)/(log(10)*Ha_flux_mean);
 OIII_instrumental_mag = -2.5*log10(OIII_flux_mean/600);
 OIII_instrumental_mag_error = (-2.5*OIII_flux_error_mean)/(log(10)*OIII_flux_mean);
 display("Ha instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
-display("Ha 5 sigma instrumental magnitude: " + string(Ha_instrumental_mag) + "±" + string(Ha_instrumental_mag_error))
 display("OIII instrumental magnitude: " + string(OIII_instrumental_mag) + "±" + string(OIII_instrumental_mag_error))
 display("% Difference of instrumental magnitude: " + string((Ha_instrumental_mag-OIII_instrumental_mag)/(Ha_instrumental_mag)*100))
 if(OIII_instrumental_mag < Ha_instrumental_mag)
