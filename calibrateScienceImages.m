@@ -68,6 +68,11 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
         calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
         calibrated_science_images = rot90(calibrated_science_images,-1);
         calibrated_science_images = fliplr(calibrated_science_images);
+        % Get filter name
+        folder_path = science_image_folders(:,i).folder;
+        folder_path_names = split(folder_path,"\");
+        filter_name = string(folder_path_names(end));
+
         for j=1:science_image_folders_size(1)
             %Get Directory,Name,FITS File, and Image Data from current
             %science image
@@ -93,10 +98,6 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
             science_image_data = rot90(science_image_data,-1);
             science_image_data = fliplr(science_image_data);
             calibrated_science_images(:,:,j) = science_image_data;
-            
-            folder_path = science_image_folders(:,i).folder;
-            folder_path_names = split(folder_path,"\");
-            filter_name = string(folder_path_names(end));
 
             if(j == 1)
                 cutoff_ADU = 0;
@@ -113,10 +114,26 @@ function [combined_calibrated_science_images] = calibrateScienceImages(data_fold
                 colormap("gray")
             end
         end
-
-        %Shifting The Calibrated Images
+        
+        %Shifting The Calibrated Images by Filter
         shifts_file_path = getFromPath(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\");
-        shifts_filename = shifts_file_path.name;
+        shift_file_found = false;
+        if(number_of_science_image_filters > length(shifts_file_path))
+            error("The number of filters exceeds the number of availiable shift files.")
+        end
+        for n=1:number_of_science_image_filters
+            shift_file_filter_suffix = split(shifts_file_path(n).name,"_");
+            shift_file_filter_suffix = split(shift_file_filter_suffix(2),".");
+            shift_file_filter_suffix = shift_file_filter_suffix(1);
+            if(filter_name == shift_file_filter_suffix)
+                shift_file_found = true;
+                shifts_filename = shifts_file_path(n).name;
+            end
+        end
+        if(~shift_file_found)
+            error("Shift file not found for filter: " + filter_name)
+        end
+
         shifted_calibrated_science_images = shiftImages(data_folder_path + calibration_folder_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);    
 
         %Co-Adding the shifted, calibrated science image
