@@ -1,5 +1,4 @@
 function [image_data_array] = createImageDataArray(folder)
-
     folder_filepath = folder.folder;
     folder_filenames = getDirectoryFilenames(folder);
 

@@ -1,4 +1,4 @@
-function [combined_calibrated_science_images] = calibrateTargetScienceImages(observation_folder_path,observation_date,target_name,results_folder_path, generic_output_filename,targets_folder_name,calibration_folder_name, biases_folder_name, darks_folder_name, flats_folder_name, science_images_folder_name, shifts_folder_name)
+function [final_calibrated_science_images] = calibrateTargetScienceImages(observation_folder_path,observation_date,target_name,results_folder_path, generic_output_filename,targets_folder_name,calibration_folder_name, biases_folder_name, darks_folder_name, flats_folder_name, science_images_folder_name, shifts_folder_name, rotate)
     % Set default folder names if not provided
     if (nargin==5), targets_folder_name="Targets"; end
     if (nargin<=6), calibration_folder_name="Calibration"; end
@@ -7,17 +7,14 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
     if (nargin<=9), flats_folder_name="Flats"; end
     if (nargin<=10), science_images_folder_name="Science Images"; end
     if (nargin<=11), shifts_folder_name="Shifts"; end
+    if (nargin<=12), rotate=true; end
     
     %Erase the current directory if included in observation_folder_path
     current_directory = pwd + "\";
     observation_folder_path = erase(observation_folder_path,current_directory);
 
     %Generate a Master Bias
-    observation_folder_path
-    observation_date
-    calibration_folder_name
-    biases_folder_name
-    bias_folder_filepath = observation_folder_path + observation_date + "\" + calibration_folder_name + "\" + biases_folder_name + "\"
+    bias_folder_filepath = observation_folder_path + observation_date + "\" + calibration_folder_name + "\" + biases_folder_name + "\";
     bias_folder = getFromPath(bias_folder_filepath);
     master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark
@@ -53,8 +50,7 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
     end
     
     %Get all folders containing science images
-    observation_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\"
-    science_image_folder_filepath = observation_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\"
+    science_image_folder_filepath = observation_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\";
     science_image_folder = getFromPath(science_image_folder_filepath);
     science_image_folders = getDirectoryFolders(science_image_folder);
 
@@ -63,13 +59,17 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
     %images
     science_image_folders_size = size(science_image_folders);
     number_of_science_image_filters = science_image_folders_size(2);
-    combined_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
-    combined_calibrated_science_images = rot90(combined_calibrated_science_images,-1);
-    combined_calibrated_science_images = fliplr(combined_calibrated_science_images);
+    final_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
+    if(rotate)
+        final_calibrated_science_images = rot90(final_calibrated_science_images,-1);
+        final_calibrated_science_images = fliplr(final_calibrated_science_images);
+    end
     for i=1:number_of_science_image_filters
         calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
-        calibrated_science_images = rot90(calibrated_science_images,-1);
-        calibrated_science_images = fliplr(calibrated_science_images);
+        if(rotate)
+            calibrated_science_images = rot90(calibrated_science_images,-1);
+            calibrated_science_images = fliplr(calibrated_science_images);
+        end
         % Get filter name
         folder_path = science_image_folders(:,i).folder;
         folder_path_names = split(folder_path,"\");
@@ -97,8 +97,10 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
             science_image_data = science_image_data / normalized_master_filter_flats(i);
 
             %Store the calibrated image
-            science_image_data = rot90(science_image_data,-1);
-            science_image_data = fliplr(science_image_data);
+            if(rotate)
+                science_image_data = rot90(science_image_data,-1);
+                science_image_data = fliplr(science_image_data);
+            end
             calibrated_science_images(:,:,j) = science_image_data;
         end
         
@@ -124,16 +126,17 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
 
         calibrated_science_images = shiftImages(observation_folder_path + observation_date + "\" + target_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);  
         end
-          
 
         %Co-Adding the shifted, calibrated science images
         
         if(size(calibrated_science_images,3) ~= 1)
-            calibrated_science_images(:,:,i) = MultiCoAdd(calibrated_science_images);
+            final_calibrated_science_images(:,:,i) = MultiCoAdd(calibrated_science_images);
         else
-            calibrated_science_images(:,:,i) = calibrated_science_images;
+            final_calibrated_science_images(:,:,i) = calibrated_science_images;
         end
-        
+        figure
+        displayAdjustedImage(final_calibrated_science_images(:,:,i))
+        title(target_name + ": " + filter_name)
         %Get the filter name associated with the shifted, calibrated
         %science images
         folder_path = science_image_folders(:,i).folder;
@@ -141,12 +144,14 @@ function [combined_calibrated_science_images] = calibrateTargetScienceImages(obs
         filter_name = string(folder_path_names(end));
 
         %Create the filter folder for this target path if it doesn't exist
-        mkdir(results_folder_path + filter_name);
-        display("i: " + int2str(i))
+        results_for_target_file_path = results_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + filter_name + "\";
+        mkdir(results_for_target_file_path);
         %Write the FITS file to the filter folder in the target folder
-        display("Filter Name: " + filter_name)
-        size()
-        wfits(calibrated_science_images(:,:,i),results_folder_path + filter_name + "\" + generic_output_filename + "_" + filter_name + ".fit");
-
+        unrotated_final_calibrated_science_image = final_calibrated_science_images(:,:,i);
+        if(rotate)
+                unrotated_final_calibrated_science_image= fliplr(unrotated_final_calibrated_science_image);
+                unrotated_final_calibrated_science_image = rot90(unrotated_final_calibrated_science_image);
+        end
+        wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + target_name + "_" + filter_name + ".fit");
     end
 end
