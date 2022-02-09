@@ -10,6 +10,7 @@ function [folders] = getDirectoryFolders(folder)
 
     folders = [];
     for i = 1:length(folder)
+        folder(i)
         if(folder(i).isdir)
             current_directory_path = folder.folder;
             current_folder = folder(i);

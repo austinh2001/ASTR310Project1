@@ -9,7 +9,11 @@ function [folder_filenames] = getDirectoryFilenames(folder)
 
     folder_filenames = strings(size(folder));
     for i = 1:length(folder)
-        folder_filenames(i) = folder(i).name;
+        if(isstring(folder(i)))
+            folder_filenames(i) = folder(i);
+        else
+            folder_filenames(i) = folder(i).name;
+        end
     end
     
 end
