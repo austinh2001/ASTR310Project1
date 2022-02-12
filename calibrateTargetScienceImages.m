@@ -1,24 +1,24 @@
-function [final_calibrated_science_images] = calibrateTargetScienceImages(observation_folder_path,observation_date,target_name,results_folder_path, generic_output_filename,targets_folder_name,calibration_folder_name, biases_folder_name, darks_folder_name, flats_folder_name, science_images_folder_name, shifts_folder_name, rotate)
+function [final_calibrated_science_images] = calibrateTargetScienceImages(telescope_folder_path,observation_date,telescope_name,target_name,results_folder_path, generic_output_filename,targets_folder_name,calibration_folder_name, biases_folder_name, darks_folder_name, flats_folder_name, science_images_folder_name, shifts_folder_name, rotate)
     % Set default folder names if not provided
-    if (nargin==5), targets_folder_name="Targets"; end
-    if (nargin<=6), calibration_folder_name="Calibration"; end
-    if (nargin<=7), biases_folder_name="Biases"; end
-    if (nargin<=8), darks_folder_name="Darks"; end
-    if (nargin<=9), flats_folder_name="Flats"; end
-    if (nargin<=10), science_images_folder_name="Science Images"; end
-    if (nargin<=11), shifts_folder_name="Shifts"; end
-    if (nargin<=12), rotate=true; end
+    if (nargin==6), targets_folder_name="Targets"; end
+    if (nargin<=7), calibration_folder_name="Calibration"; end
+    if (nargin<=8), biases_folder_name="Biases"; end
+    if (nargin<=9), darks_folder_name="Darks"; end
+    if (nargin<=10), flats_folder_name="Flats"; end
+    if (nargin<=11), science_images_folder_name="Science Images"; end
+    if (nargin<=12), shifts_folder_name="Shifts"; end
+    if (nargin<=13), rotate=true; end
     
-    %Erase the current directory if included in observation_folder_path
+    %Erase the current directory if included in telescope_folder_path
     current_directory = pwd + "\";
-    observation_folder_path = erase(observation_folder_path,current_directory);
-
+    telescope_folder_path = telescope_folder_path + telescope_name + "\";
+    telescope_folder_path = erase(telescope_folder_path,current_directory);
     %Generate a Master Bias
-    bias_folder_filepath = observation_folder_path + observation_date + "\" + calibration_folder_name + "\" + biases_folder_name + "\";
+    bias_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + biases_folder_name + "\";
     bias_folder = getFromPath(bias_folder_filepath);
     master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark
-    dark_folder_filepath = observation_folder_path + observation_date + "\" + calibration_folder_name + "\" + darks_folder_name + "\";
+    dark_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + darks_folder_name + "\";
     dark_folder = getFromPath(dark_folder_filepath);
     master_dark = generateMasterDark(dark_folder,master_bias);
 
@@ -26,7 +26,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(observ
     dark_exposure = getExposureTime(dark_folder);
 
     %Get the folders for the flats of each filter
-    flats_folder_filepath = observation_folder_path + observation_date + "\" + calibration_folder_name + "\" + flats_folder_name + "\";
+    flats_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + flats_folder_name + "\";
     flats_folder = getFromPath(flats_folder_filepath);
     flat_filter_folders = getDirectoryFolders(flats_folder);
 
@@ -50,7 +50,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(observ
     end
     
     %Get all folders containing science images
-    science_image_folder_filepath = observation_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\";
+    science_image_folder_filepath = telescope_folder_path + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\";
     science_image_folder = getFromPath(science_image_folder_filepath);
     science_image_folders = getDirectoryFolders(science_image_folder);
 
@@ -105,7 +105,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(observ
         end
         
         %Shifting The Calibrated Images by Filter
-        shifts_file_path = getFromPath(observation_folder_path + observation_date + "\" + "Targets" + "\" + target_name + "\" + shifts_folder_name + "\");
+        shifts_file_path = getFromPath(telescope_folder_path + "Targets" + "\" + target_name + "\" + shifts_folder_name + "\");
         if(~isempty(shifts_file_path))
             shift_file_found = false;
             if(number_of_science_image_filters > length(shifts_file_path))
@@ -124,7 +124,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(observ
                 error("Shift file not found for filter: " + filter_name)
             end
 
-        calibrated_science_images = shiftImages(observation_folder_path + observation_date + "\" + target_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);  
+        calibrated_science_images = shiftImages(telescope_folder_path + target_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);  
         end
 
         %Co-Adding the shifted, calibrated science images
@@ -144,7 +144,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(observ
         filter_name = string(folder_path_names(end));
 
         %Create the filter folder for this target path if it doesn't exist
-        results_for_target_file_path = results_folder_path + observation_date + "\" + targets_folder_name + "\" + target_name + "\" + filter_name + "\";
+        results_for_target_file_path = results_folder_path + observation_date + "\" + telescope_name + "\" + targets_folder_name + "\" + target_name + "\" + filter_name + "\";
         mkdir(results_for_target_file_path);
         %Write the FITS file to the filter folder in the target folder
         unrotated_final_calibrated_science_image = final_calibrated_science_images(:,:,i);
