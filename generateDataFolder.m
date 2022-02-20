@@ -101,12 +101,11 @@ function [] = generateDataFolder(data_folder_file_path,resulting_data_folder_fil
     for i=1:length(flat_filters)
         mkdir(resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + calibration_folder_name + "\" + flats_folder_name + "\" + flat_filters(i));
     end
-
+    
     for f=1:length(flat_file_double_cells)
         flat_file_double_cell =  flat_file_double_cells{f};
         flat_filename = flat_file_double_cell{1};
         flat_filter = flat_file_double_cell{2};
-        resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + calibration_folder_name + "\" + flats_folder_name + "\" + flat_filter + "\";
         copyfile(calibration_folder_file_path + flat_filename,resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + calibration_folder_name + "\" + flats_folder_name + "\" + flat_filter + "\");
     end  
 end

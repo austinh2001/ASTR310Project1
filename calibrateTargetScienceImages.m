@@ -136,7 +136,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         end
         figure
         displayAdjustedImage(final_calibrated_science_images(:,:,i))
-        title(target_name + ": " + filter_name)
+        title(observation_date + ":" + telescope_name + "-" + target_name + ": " + filter_name)
         %Get the filter name associated with the shifted, calibrated
         %science images
         folder_path = science_image_folders(:,i).folder;
@@ -152,6 +152,6 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
                 unrotated_final_calibrated_science_image= fliplr(unrotated_final_calibrated_science_image);
                 unrotated_final_calibrated_science_image = rot90(unrotated_final_calibrated_science_image);
         end
-        wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + target_name + "_" + filter_name + ".fit");
+        wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end
