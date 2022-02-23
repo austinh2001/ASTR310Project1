@@ -1,5 +1,5 @@
 original_fits_image = rfits("C:\Users\austi\Documents\GitHub\NebulaProject\Observations\2022-02-19\14in\Targets\NGC2346\Science Images\ha\NGC2346-001-ha.fit");
-shifted_fits_image = rfits("C:\Users\austi\Documents\GitHub\NebulaProject\Observations\2022-02-19\14in\Targets\NGC2346\Science Images\ha\NGC2346-002-ha.fit");
+shifted_fits_image = rfits("C:\Users\austi\Documents\GitHub\NebulaProject\Observations\2022-02-19\14in\Targets\NGC2346\Science Images\ha\NGC2346-014-ha.fit");
 original_data = original_fits_image.data;
 shifted_data = shifted_fits_image.data;
 bins = 100;
@@ -28,7 +28,7 @@ shifted_SURFPoints = detectSURFFeatures(histogram_shifted_fits_image,"MetricThre
 [shifted_SURFFeatures, shifted_SURFPoints] = extractFeatures(histogram_shifted_fits_image, shifted_SURFPoints);
 
 pairedSURFFeatures = matchFeatures(original_SURFFeatures, shifted_SURFFeatures);
-blob_count = length(pairedSURFFeatures);
+blob_count = 
 original_points = [];
 shifted_points = [];
 original_points_indices = [];
@@ -41,9 +41,9 @@ for i = 1:blob_count
 end
 figure
 showMatchedFeatures(histogram_original_fits_image, histogram_shifted_fits_image, original_SURFPoints(original_points_indices, :),shifted_SURFPoints(shifted_points_indices, :), 'falsecolor');
-shifts = original_points-shifted_points;
-removed_shift_outliers = rmoutliers(shifts);
-avg_shift = mean(removed_shift_outliers,1);
+shifts = original_points-shifted_points
+removed_shift_outliers = rmoutliers(shifts)
+avg_shift = mean(removed_shift_outliers,1)
 corrected_image = imshift(histogram_shifted_fits_image,avg_shift(2),avg_shift(1));
 figure
 imshowpair(histogram_original_fits_image,corrected_image,'falsecolor');
