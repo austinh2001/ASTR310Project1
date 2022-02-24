@@ -63,12 +63,14 @@ function [] = generateDataFolder(data_folder_file_path,resulting_data_folder_fil
         target_name = target_filter_double_cell{1};
         filter_names = target_filter_double_cell{2};
         for f=1:length(filter_names)
-            current_filter_folder_file_path = resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\" + filter_names(f);
-            mkdir(current_filter_folder_file_path);
+            science_image_filter_folder_file_path = resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\" + filter_names(f);
+            mkdir(science_image_filter_folder_file_path);
+            shift_filter_folder_file_path = resulting_data_folder_file_path + observation_date + "\" + telescope_name + "\" + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\" + filter_names(f);
+            mkdir(shift_filter_folder_file_path);
             for s=1:length(science_files)
                 split_science_file_name = split(erase(science_files(s),".fit"),"-");
                 if(split_science_file_name(1) == target_name & split_science_file_name(3) == filter_names(f))
-                    copyfile(science_folder_file_path+science_files(s),current_filter_folder_file_path)
+                    copyfile(science_folder_file_path+science_files(s),science_image_filter_folder_file_path)
                 end
             end
         end

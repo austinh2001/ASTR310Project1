@@ -1,0 +1,31 @@
+LOCAL DATE: 02/19/2022		
+LOCAL START TIME: 18:00	   
+LOCAL END TIME:	00:50	
+
+NAME(S): Rachel Weller, Madeline Lessard, Austin Humphreys
+
+GOAL(S): Observing PN NGC 2346 through Ha, OIII and grating filter.
+
+
+TRANSPARENCY:	Transparent
+SEEING:		Too cloudy to forecast
+TEMPERATURE:	23F to 32F
+HUMIDITY:	25% to 30%
+
+TELESCOPE:		14in Celestron SCT
+CAMERA:			SBIG ST-8
+Camera temp setpoint:	-15C
+
+
+IMAGE LOG
+
+# frames	target		exposure length		filter
+1		NGC 2346	30s			clear
+16		NGC 2346	300s			OIII 			(started 19:07)
+16		NGC 2346	300s			Ha
+16		NGC 2346	300s			SA-200 (grating)
+7		n/a		300s			dark
+7		n/a		n/a			bias
+17		flat		3s			OIII
+17		flat		3s			Ha
+17		flat		0.5s			SA-200 (grating)

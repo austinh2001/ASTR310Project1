@@ -1,0 +1,31 @@
+LOCAL DATE:	02/19/2022				
+LOCAL START TIME:	18:00 		
+LOCAL END TIME:		00:30	
+
+NAME(S): Austin Humphreys, Madeline Lessard, Rachel Weller		
+GOAL(S): Observe Abell 21 through Ha, OIII, S2, and N2 filters			
+
+TRANSPARENCY:	Transparent 				
+SEEING:		Too cloudy to forecast	
+TEMPERATURE:	23F to 32F		
+HUMIDITY:	25% to 30%		
+
+TELESCOPE:		07in (178mm) AP refractor
+CAMERA:			SBIG ST-10
+Camera temp setpoint:	-15C
+
+
+IMAGE LOG
+# frames	target		exposure length		filter
+1		Test		30s			clear
+10		Abell 21	300s			H-a (Started at 7:44 pm)
+10		Abell 21	300s			OIII
+10		Abell 21	300s			SII
+10		Abell 21	300s			NII
+7		darks		300s			n/a
+7		biases		n/a			n/a
+17		flats		2s			H-a
+17		flats		3s			OIII
+17		flats		2s			SII
+17		flats		2s			NII
+

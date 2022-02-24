@@ -7,7 +7,7 @@ results_folder_path = "Calibrated Images\";
 
 % Establish generic filenames for resulting calibrated images
 generic_filename = "calibrated_image";
-data_folder_path = "C:\Users\Austin\Downloads\20220219_14in_planetarynebula\";
+data_folder_path = pwd + "\" + "Data\20220219_14in_planetarynebula\";
 generateDataFolder(data_folder_path,observation_folder_path)
 calibrateObservationNight(observation_folder_path,dates(1),results_folder_path,generic_filename);
 

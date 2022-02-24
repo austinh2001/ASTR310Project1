@@ -105,27 +105,29 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         end
         
         %Shifting The Calibrated Images by Filter
-        shifts_file_path = getFromPath(telescope_folder_path + "Targets" + "\" + target_name + "\" + shifts_folder_name + "\");
-        if(~isempty(shifts_file_path))
-            shift_file_found = false;
-            if(number_of_science_image_filters > length(shifts_file_path))
-                error("The number of filters exceeds the number of availiable shift files.")
-            end
-            for n=1:number_of_science_image_filters
-                shift_file_filter_suffix = split(shifts_file_path(n).name,"_");
-                shift_file_filter_suffix = split(shift_file_filter_suffix(2),".");
-                shift_file_filter_suffix = shift_file_filter_suffix(1);
-                if(filter_name == shift_file_filter_suffix)
-                    shift_file_found = true;
-                    shifts_filename = shifts_file_path(n).name;
+        shifts_file_path = telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\"+ filter_name + "\";
+        shifts_folder = getFromPath(shifts_file_path);
+        shifts_filename = observation_date + "_" + target_name + "_" + filter_name + "_shifts.xlsx";
+        %if(isempty(shifts_folder)) CHANGE BACK TO THIS
+        if(true)
+                shifts_array = [[0,0]];
+                for k=2:science_image_folders_size(1)
+                    shifts_array = [shifts_array ; calculateShift(calibrated_science_images(:,:,1),calibrated_science_images(:,:,k))];
                 end
+                writematrix(shifts_array,shifts_file_path + shifts_filename)
+        else
+            if(length(shifts_folder) > 1)
+                error("Multiple shift files found at: " + shifts_file_path)
             end
-            if(~shift_file_found)
-                error("Shift file not found for filter: " + filter_name)
+            shift_file_filter_suffix = split(shifts_folder(1).name,"_");
+            shift_file_filter_suffix = split(shift_file_filter_suffix(3),".");
+            shift_file_filter_suffix = shift_file_filter_suffix(1);
+            if(shift_file_filter_suffix ~= filter_name)
+                error("Invalid shift file: " + shifts_file_path + shifts_folder(1).name)
             end
-
-        calibrated_science_images = shiftImages(telescope_folder_path + target_name + "\" + shifts_folder_name + "\" + shifts_filename,calibrated_science_images);  
         end
+        
+        calibrated_science_images = shiftImages(pwd + "\" + telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\" + filter_name + "\" + shifts_filename,calibrated_science_images);
 
         %Co-Adding the shifted, calibrated science images
         
