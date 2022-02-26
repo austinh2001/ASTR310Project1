@@ -108,11 +108,17 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         shifts_file_path = telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\"+ filter_name + "\";
         shifts_folder = getFromPath(shifts_file_path);
         shifts_filename = observation_date + "_" + target_name + "_" + filter_name + "_shifts.xlsx";
-        %if(isempty(shifts_folder)) CHANGE BACK TO THIS
-        if(true)
+        if(isempty(shifts_folder))
                 shifts_array = [[0,0]];
+                xShiftSum = 0;
+                yShiftSum = 0;
                 for k=2:science_image_folders_size(1)
-                    shifts_array = [shifts_array ; calculateShift(calibrated_science_images(:,:,1),calibrated_science_images(:,:,k))];
+%                     shifts = calculateShift(calibrated_science_images(:,:,k-1),calibrated_science_images(:,:,k));
+%                     xShiftSum = xShiftSum + shifts(1);
+%                     yShiftSum = yShiftSum + shifts(2);
+%                     shifts_array = [shifts_array ; [xShiftSum,yShiftSum]];
+                    shifts = calculateShift(calibrated_science_images(:,:,1),calibrated_science_images(:,:,k));
+                    shifts_array = [shifts_array ; shifts];
                 end
                 writematrix(shifts_array,shifts_file_path + shifts_filename)
         else

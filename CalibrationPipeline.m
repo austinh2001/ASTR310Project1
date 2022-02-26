@@ -9,5 +9,7 @@ results_folder_path = "Calibrated Images\";
 generic_filename = "calibrated_image";
 data_folder_path = pwd + "\" + "Data\20220219_14in_planetarynebula\";
 generateDataFolder(data_folder_path,observation_folder_path)
+data_folder_path = pwd + "\" + "Data\20220219_07in_PN\";
+generateDataFolder(data_folder_path,observation_folder_path)
 calibrateObservationNight(observation_folder_path,dates(1),results_folder_path,generic_filename);
 
