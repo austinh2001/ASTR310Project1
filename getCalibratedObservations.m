@@ -24,9 +24,9 @@ function [calibratedImageDataArrays, informationTables] = getCalibratedObservati
                     filters = [filters;filter_names(k)];
                 end
             end
-            calibrated_observations_table = table(telescopes,targets,filters)
-            informationTables{end+1} = calibrated_observations_table
-            calibratedImageDataArrays{end+1} = images
+            calibrated_observations_table = table(telescopes,targets,filters);
+            informationTables{end+1} = calibrated_observations_table;
+            calibratedImageDataArrays{end+1} = images;
             images = [];
             telescopes = [];
             targets = [];
