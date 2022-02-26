@@ -7,7 +7,7 @@ function [shifts_array] = calculateShift(original_data,shifted_data)
 %     blur_number = 12;
     bins = 100;
     n_devs = 1;
-    blur_number = 20;
+%     blur_number = 20;
 
 %     standard_deviation = std(original_data(:));
 %     mean_value = mean(mean(original_data));
@@ -36,10 +36,11 @@ function [shifts_array] = calculateShift(original_data,shifted_data)
     min_value =  mean_value - n_devs * standard_deviation;
     normalized_shifted_fits_image = (shifted_data/(max_value-min_value))-min_value/(max_value-min_value);
     histogram_shifted_fits_image = histeq(normalized_shifted_fits_image,bins);
-
+    
+    % Credit for POCShift (https://www.mathworks.com/matlabcentral/fileexchange/46978-pocshift)
     shifts_array = POCShift(histogram_shifted_fits_image,histogram_original_fits_image);
     rn = shifts_array(2);
     cn = shifts_array(1);
-    imshowpair(histogram_original_fits_image, imshift(histogram_shifted_fits_image,rn,cn),"falsecolor")
+    %imshowpair(histogram_original_fits_image, imshift(histogram_shifted_fits_image,rn,cn),"falsecolor")
 
 end

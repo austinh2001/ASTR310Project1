@@ -82,14 +82,14 @@ function [] = generateDataFolder(data_folder_file_path,resulting_data_folder_fil
     calibration_files = getDirectoryFilenames(calibration_folder);
     dark_name = "d";
     bias_name = "bi";
-    flat_name = "flats";
+    flat_names = ["flats","flat"];
     dark_file_names = [];
     bias_file_names = [];
     flat_file_double_cells = {};
     flat_filters = [];
     for c=1:length(calibration_files)
         split_calibration_file_name = split(erase(calibration_files(c),".fit"),"-");
-        if(split_calibration_file_name(1) == flat_name)
+        if(split_calibration_file_name(1) == flat_names(1) || split_calibration_file_name(1) == flat_names(2))
             flat_filters = [flat_filters split_calibration_file_name(3)];
             flat_file_double_cells{end+1} = {calibration_files(c),split_calibration_file_name(3)};
         elseif(split_calibration_file_name(3) == bias_name)
