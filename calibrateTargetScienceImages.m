@@ -160,6 +160,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
                 unrotated_final_calibrated_science_image= fliplr(unrotated_final_calibrated_science_image);
                 unrotated_final_calibrated_science_image = rot90(unrotated_final_calibrated_science_image);
         end
+        unrotated_final_calibrated_science_image
         wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end

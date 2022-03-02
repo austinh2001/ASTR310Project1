@@ -24,14 +24,14 @@ function [shifts_array] = calculateShift(original_data,shifted_data)
 %     histogram_shifted_fits_image = filloutliers(imgaussfilt(histeq(normalized_shifted_fits_image,bins),blur_number),'nearest','mean');
 
     standard_deviation = std(original_data(:));
-    mean_value = mean(mean(original_data));
+    mean_value = mean(original_data(:));
     max_value = mean_value + n_devs * standard_deviation;
     min_value =  mean_value - n_devs * standard_deviation;
     normalized_fits_image = (original_data/(max_value-min_value))-min_value/(max_value-min_value);
     histogram_original_fits_image = histeq(normalized_fits_image,bins);
 
     standard_deviation = std(shifted_data(:));
-    mean_value = mean(mean(shifted_data));
+    mean_value = mean(shifted_data(:));
     max_value = mean_value + n_devs * standard_deviation;
     min_value =  mean_value - n_devs * standard_deviation;
     normalized_shifted_fits_image = (shifted_data/(max_value-min_value))-min_value/(max_value-min_value);
