@@ -72,6 +72,9 @@ R=(F.*conj(M))./abs((F.*conj(M)));
   
 % 3. Estimate the translation:
 
+% This portion has been edited by Austin Humphreys. variables, x & y were
+% replaced by row and col. What was x was actually the rows and what was y
+% was actually the columns, which was counterintutive and was changed.
 rmax = max(max(r));
 [row , col] = find(r == rmax);
 row=ceil(n/2)-row; col=ceil(m/2)-col;
