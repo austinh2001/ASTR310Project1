@@ -1,21 +1,40 @@
 function [folders] = getDirectoryFolders(folder)
-    %Input: a folder struct provided by the dir method or the custom-made
-    %getFromPath method
-    %Ouput: an array containing structs which correspond to the files in
-    %the provided folder
+    % Description: Get a cell array containing the folder structs of only the folders in the provided folder (excludes files)
 
-    if(isempty(folder))
-        error("There is nothing in the directory: " + folder.folder)
+    %----------------------------------------------------------------------
+
+    % Input: A folder struct provided by the getFromRelative path or
+    % getFromFullPath functions
+    
+    %----------------------------------------------------------------------
+
+    % Output: A cell array of folder structs representing the folders
+
+    %----------------------------------------------------------------------
+
+    % Errors:
+    % The input provided is not a folder struct: The provided input was not
+    % a folder struct.
+    
+    %----------------------------------------------------------------------
+
+    if(~isstruct(folder))
+        try
+            display(folder)
+        catch cannot_display
+            display("Cannot display error-inducing parameter.")
+        end
+        error("The input provided is not a folder struct.")
     end
 
-    folders = [];
+    folders = {};
     for i = 1:length(folder)
         if(folder(i).isdir)
             current_directory_path = folder.folder;
             current_folder = folder(i);
             current_folder_name = current_folder.name;
-            current_folder = getFromPath(fullfile(current_directory_path + "\",current_folder_name));
-            folders = [folders current_folder];
+            current_folder = getFromRelativePath(fullfile(current_directory_path + "\",current_folder_name));
+            folders{end+1} = current_folder;
         end
     end
 end

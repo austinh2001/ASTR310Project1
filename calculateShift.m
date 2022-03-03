@@ -42,5 +42,4 @@ function [shifts_array] = calculateShift(original_data,shifted_data)
     rn = shifts_array(2);
     cn = shifts_array(1);
     %imshowpair(histogram_original_fits_image, imshift(histogram_shifted_fits_image,rn,cn),"falsecolor")
-
 end

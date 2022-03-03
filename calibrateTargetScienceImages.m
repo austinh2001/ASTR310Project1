@@ -15,11 +15,11 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
     telescope_folder_path = erase(telescope_folder_path,current_directory);
     %Generate a Master Bias
     bias_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + biases_folder_name + "\";
-    bias_folder = getFromPath(bias_folder_filepath);
+    bias_folder = getFromRelativePath(bias_folder_filepath);
     master_bias = generateMasterBias(bias_folder);
     %Generate a Master Dark
     dark_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + darks_folder_name + "\";
-    dark_folder = getFromPath(dark_folder_filepath);
+    dark_folder = getFromRelativePath(dark_folder_filepath);
     master_dark = generateMasterDark(dark_folder,master_bias);
 
     %Get the exposure time of the darks (this assumes they are all the same)
@@ -27,7 +27,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
 
     %Get the folders for the flats of each filter
     flats_folder_filepath = telescope_folder_path + calibration_folder_name + "\" + flats_folder_name + "\";
-    flats_folder = getFromPath(flats_folder_filepath);
+    flats_folder = getFromRelativePath(flats_folder_filepath);
     flat_filter_folders = getDirectoryFolders(flats_folder);
 
     %Calculate Exposure Time Correction Factor for each flat filter
@@ -35,23 +35,23 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
     number_of_flat_filter_folders = flat_filter_folders_size(2);
     filter_exposure_time_correction_factors = zeros(number_of_flat_filter_folders,1);
     for i=1:number_of_flat_filter_folders
-        filter_exposure_time_correction_factors(i) = getExposureTime(flat_filter_folders(:,i))/dark_exposure;
+        filter_exposure_time_correction_factors(i) = getExposureTime(flat_filter_folders{i})/dark_exposure;
     end
     
     %Generate the Master Flats for each filter and their associated
     %normalized master flats for each filter
-    flat_template_image = generateTemplateFITSData(flat_filter_folders(:,1));
+    flat_template_image = generateTemplateFITSData(flat_filter_folders{1});
     master_filter_flats = flat_template_image;
     normalized_master_filter_flats = flat_template_image;
 
     for j=1:length(number_of_flat_filter_folders)
-        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders(:,j),master_bias,master_dark,filter_exposure_time_correction_factors(j));
+        master_filter_flats(:,:,j) = generateMasterFlat(flat_filter_folders{j},master_bias,master_dark,filter_exposure_time_correction_factors(j));
         normalized_master_filter_flats(:,:,j) = normalizeMasterFlat(master_filter_flats(:,:,j));
     end
     
     %Get all folders containing science images
     science_image_folder_filepath = telescope_folder_path + "\" + targets_folder_name + "\" + target_name + "\" + science_images_folder_name + "\";
-    science_image_folder = getFromPath(science_image_folder_filepath);
+    science_image_folder = getFromRelativePath(science_image_folder_filepath);
     science_image_folders = getDirectoryFolders(science_image_folder);
 
     %Loop through files in each science image folder, apply the necessary
@@ -59,27 +59,24 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
     %images
     science_image_folders_size = size(science_image_folders);
     number_of_science_image_filters = science_image_folders_size(2);
-    final_calibrated_science_images = generateTemplateFITSData(science_image_folders(:,1));
+    final_calibrated_science_images = generateTemplateFITSData(science_image_folders{1}(1));
     if(rotate)
         final_calibrated_science_images = rot90(final_calibrated_science_images,-1);
         final_calibrated_science_images = fliplr(final_calibrated_science_images);
     end
     for i=1:number_of_science_image_filters
-        calibrated_science_images = generateTemplateFITSData(science_image_folders(:,i));
-        if(rotate)
-            calibrated_science_images = rot90(calibrated_science_images,-1);
-            calibrated_science_images = fliplr(calibrated_science_images);
-        end
+        calibrated_science_images = [];
         % Get filter name
-        folder_path = science_image_folders(:,i).folder;
+        folder_path = science_image_folders{i}.folder;
         folder_path_names = split(folder_path,"\");
         filter_name = string(folder_path_names(end));
-
-        for j=1:science_image_folders_size(1)
+        number_of_science_images = size(science_image_folders{i});
+        number_of_science_images = number_of_science_images(1);
+        for j=1:number_of_science_images
             %Get Directory,Name,FITS File, and Image Data from current
             %science image
-            science_image_directory = science_image_folders(j,i).folder;
-            science_image_filename = science_image_folders(j,i).name;
+            science_image_directory = science_image_folders{i}(j).folder;
+            science_image_filename = science_image_folders{i}(j).name;
             science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
             science_image_data = science_image_fits.data;
 
@@ -101,12 +98,12 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
                 science_image_data = rot90(science_image_data,-1);
                 science_image_data = fliplr(science_image_data);
             end
-            calibrated_science_images(:,:,j) = science_image_data;
+            calibrated_science_images = cat(3,calibrated_science_images,science_image_data);
         end
         
         %Shifting The Calibrated Images by Filter
         shifts_file_path = telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\"+ filter_name + "\";
-        shifts_folder = getFromPath(shifts_file_path);
+        shifts_folder = getFromRelativePath(shifts_file_path);
         shifts_filename = observation_date + "_" + target_name + "_" + filter_name + "_shifts.xlsx";
         if(isempty(shifts_folder))
                 shifts_array = [[0,0]];
@@ -147,7 +144,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         title(observation_date + ":" + telescope_name + "-" + target_name + ": " + filter_name)
         %Get the filter name associated with the shifted, calibrated
         %science images
-        folder_path = science_image_folders(:,i).folder;
+        folder_path = science_image_folders{i}.folder;
         folder_path_names = split(folder_path,"\");
         filter_name = string(folder_path_names(end));
 
@@ -160,7 +157,6 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
                 unrotated_final_calibrated_science_image= fliplr(unrotated_final_calibrated_science_image);
                 unrotated_final_calibrated_science_image = rot90(unrotated_final_calibrated_science_image);
         end
-        unrotated_final_calibrated_science_image
         wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end

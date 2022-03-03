@@ -32,7 +32,6 @@ for t=1:length(informationTables)
         elseif(filter_name == "s")
             color = [234/255,1,0];
         end
-        figure
         n_devs = 1;
         image_data = image_data_array(:,:,i);
         %standard_deviation = std(image_data(:));
@@ -40,7 +39,8 @@ for t=1:length(informationTables)
         %min_value = mean_value - n_devs * standard_deviation;
         ADU_range = [400,2000];
         [colorized_image, color_object] = colorizeImage(image_data,color,ADU_range);
-        colorized_images{end+1} = colorized_image; 
+        colorized_images{end+1} = colorized_image;
+        figure
         displayImage(colorized_image)
         hold on
         title(telescope + ":" + target_name + ":" + filter_name)
@@ -51,6 +51,7 @@ for t=1:length(informationTables)
     for n=1:length(colorized_images)
         summed_colorized_image = CoAdd(summed_colorized_image,colorized_images{n});
     end
+    figure
     displayImage(summed_colorized_image)
 end
 
