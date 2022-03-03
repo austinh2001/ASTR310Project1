@@ -1,5 +1,5 @@
-function [] = displayAdjustedFITS(fits_image,z,rotate)
-    % Description: Displays FITS image data with some z-score adjustment with the ability to rotate it into the default orientation. 
+function [] = displayFITS(fits_image, rotate)
+    % Description: Displays FITS image data directly with the ability to rotate it into the default orientation. 
 
     %----------------------------------------------------------------------
 
@@ -21,13 +21,12 @@ function [] = displayAdjustedFITS(fits_image,z,rotate)
 
     % The input provided for fits_image is not a struct: The value of
     % fits_image which was provided is not a struct.
-
+    
     %----------------------------------------------------------------------
     
-    % Setting default values of z to 1 and rotate to true
-    if (nargin==1), z=1; end
-    if (nargin<=2), rotate=true; end
-    
+    % Setting default value of rotate to true
+    if (nargin==1), rotate=true; end
+
     % Checking  whether the input value of fits_image is a struct and
     % raising an error if it is not
     if(~isstruct(fits_image))
@@ -38,8 +37,8 @@ function [] = displayAdjustedFITS(fits_image,z,rotate)
         end
         error("The input provided for fits_image is not a struct.")
     end
-
-    % Display the adjusted image data in the FITS struct
-    displayAdjustedImage(fits_image.data,z,rotate)
+    
+    % Display the image data in the FITS struct
+    displayImage(fits_image.data,rotate)
 end
 
