@@ -195,7 +195,7 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     
     % Find the threshold value, as determined by the sky noise region
     sky_noise_region = generateSkyNoiseRegion(im,bounding_array);
-    threshold_ADU = calculateThreshold(sky_noise_region,z)
+    threshold_ADU = calculateThreshold(sky_noise_region,z);
 
     % Generate an empty template array the same size as the original image
     threshold_image = zeros(size(im));
@@ -205,8 +205,7 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     [xx,yy]=meshgrid(1:b,1:a);
     
     % Create a 2D array of boolean values the same size as the original image
-    % to determine whether a given point in im is within the calculated 
-    % rotated ellipse
+    % to determine whether a given point in im is within the rotated ellipse
     alpha = degrees_angle * (pi/180);
     ixsrc=(((cos(alpha).*(xx-col)+sin(alpha).*(yy-row))./rad1).^2+(((sin(alpha).*(xx-col)-cos(alpha).*(yy-row))./rad2).^2))<=1;
     figure
