@@ -25,6 +25,7 @@ function [directory_folder] = getFromRelativePath(relative_path)
     % Custom-made files which accept the folder struct as input:
     % getDirectoryFolders.m
     % getDirectoryFiles.m
+    % getDirectoryFolderNames.m
     % getDirectoryFilenames.m
 
     %----------------------------------------------------------------------
@@ -44,6 +45,8 @@ function [directory_folder] = getFromRelativePath(relative_path)
 
     %----------------------------------------------------------------------
 
+    % Checking whether the input value of relative_path is a string and
+    % raising an error if it is not
     if(~isstring(relative_path))
         try
             display(relative_path)
@@ -53,14 +56,30 @@ function [directory_folder] = getFromRelativePath(relative_path)
         error("The input path provided is not a string.")
     end
 
+    % Get the current directory (that you are relative to)
     current_directory = pwd + "\";
-    relative_path = erase(relative_path,current_directory);
-    directory_file_path = current_directory + relative_path;
-    directory_folder = dir(fullfile(directory_file_path));
-    directory_folder = directory_folder(3:end);
 
+    % If the relative path has the current directory in it (i.e. it is
+    % actually a full path), then remove it.
+    relative_path = erase(relative_path,current_directory);
+
+    % Add the current directory to the relative path to get a full path for
+    % the target path
+    directory_file_path = current_directory + relative_path;
+
+    % Get the folder struct of the target path
+    directory_folder = dir(fullfile(directory_file_path));
+
+    % Remove the first two unimportant elements of the folder struct (they
+    % have names of ".." and ".")
+    directory_folder = directory_folder(3:end);
+    
+    % Checking whether the resulting directory folder is empty and raising
+    % an error if it is. 
     if(isempty(directory_folder))
+        warning("Try using the isPathEmpty.m function to determine if your path is empty beforehand.")
         error("The input path does not exist or is empty: " + directory_file_path)
     end
+    
 end
 

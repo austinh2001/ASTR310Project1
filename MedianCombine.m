@@ -1,4 +1,4 @@
-function [median_combined_image_data] = MedianCombine(image_data_array)
+function [median_combined_image_data] = medianCombine(image_data_array)
     image_data_array_size = size(image_data_array);
     median_combined_image_data = zeros(image_data_array_size(1),image_data_array_size(2));
     for row=1:image_data_array_size(1)

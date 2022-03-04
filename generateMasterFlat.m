@@ -6,7 +6,7 @@ function [master_flat] = generateMasterFlat(flat_folder,master_bias,master_dark,
         flat_imageDataArray(:,:,k) = flat_imageDataArray(:,:,k) - master_bias;
         flat_imageDataArray(:,:,k) = flat_imageDataArray(:,:,k) - master_dark;
     end
-    master_flat = MedianCombine(flat_imageDataArray);
+    master_flat = medianCombine(flat_imageDataArray);
 
     %displayAdjustedImage(master_flat)
     %title("Master Flat")

@@ -60,10 +60,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
     science_image_folders_size = size(science_image_folders);
     number_of_science_image_filters = science_image_folders_size(2);
     final_calibrated_science_images = generateTemplateFITSData(science_image_folders{1}(1));
-    if(rotate)
-        final_calibrated_science_images = rot90(final_calibrated_science_images,-1);
-        final_calibrated_science_images = fliplr(final_calibrated_science_images);
-    end
+
     for i=1:number_of_science_image_filters
         calibrated_science_images = [];
         % Get filter name
@@ -93,32 +90,23 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
             %Divide the normalized master flat for the current filter
             science_image_data = science_image_data / normalized_master_filter_flats(i);
 
-            %Store the calibrated image
-            if(rotate)
-                science_image_data = rot90(science_image_data,-1);
-                science_image_data = fliplr(science_image_data);
-            end
             calibrated_science_images = cat(3,calibrated_science_images,science_image_data);
         end
         
         %Shifting The Calibrated Images by Filter
         shifts_file_path = telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\"+ filter_name + "\";
-        shifts_folder = getFromRelativePath(shifts_file_path);
         shifts_filename = observation_date + "_" + target_name + "_" + filter_name + "_shifts.xlsx";
-        if(isempty(shifts_folder))
+        if(isPathEmpty(shifts_file_path))
                 shifts_array = [[0,0]];
                 xShiftSum = 0;
                 yShiftSum = 0;
-                for k=2:science_image_folders_size(1)
-%                     shifts = calculateShift(calibrated_science_images(:,:,k-1),calibrated_science_images(:,:,k));
-%                     xShiftSum = xShiftSum + shifts(1);
-%                     yShiftSum = yShiftSum + shifts(2);
-%                     shifts_array = [shifts_array ; [xShiftSum,yShiftSum]];
+                for k=2:number_of_science_images
                     shifts = calculateShift(calibrated_science_images(:,:,1),calibrated_science_images(:,:,k));
                     shifts_array = [shifts_array ; shifts];
                 end
                 writematrix(shifts_array,shifts_file_path + shifts_filename)
         else
+            shifts_folder = getFromRelativePath(shifts_file_path);
             if(length(shifts_folder) > 1)
                 error("Multiple shift files found at: " + shifts_file_path)
             end
@@ -129,18 +117,17 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
                 error("Invalid shift file: " + shifts_file_path + shifts_folder(1).name)
             end
         end
-        
         calibrated_science_images = shiftImages(pwd + "\" + telescope_folder_path + targets_folder_name + "\" + target_name + "\" + shifts_folder_name + "\" + filter_name + "\" + shifts_filename,calibrated_science_images);
 
         %Co-Adding the shifted, calibrated science images
         
         if(size(calibrated_science_images,3) ~= 1)
-            final_calibrated_science_images(:,:,i) = MultiCoAdd(calibrated_science_images);
+            final_calibrated_science_images(:,:,i) = multiCoAdd(calibrated_science_images);
         else
             final_calibrated_science_images(:,:,i) = calibrated_science_images;
         end
         figure
-        displayAdjustedImage(final_calibrated_science_images(:,:,i))
+        displayAdjustedImage(final_calibrated_science_images(:,:,i),1,rotate)
         title(observation_date + ":" + telescope_name + "-" + target_name + ": " + filter_name)
         %Get the filter name associated with the shifted, calibrated
         %science images
@@ -153,10 +140,6 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         mkdir(results_for_target_file_path);
         %Write the FITS file to the filter folder in the target folder
         unrotated_final_calibrated_science_image = final_calibrated_science_images(:,:,i);
-        if(rotate)
-                unrotated_final_calibrated_science_image= fliplr(unrotated_final_calibrated_science_image);
-                unrotated_final_calibrated_science_image = rot90(unrotated_final_calibrated_science_image);
-        end
         wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end

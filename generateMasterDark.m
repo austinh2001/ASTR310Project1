@@ -4,7 +4,7 @@ function [master_dark] = generateMasterDark(dark_folder,master_bias)
     for k=1:dark_imageDataArray_size(3)
         dark_imageDataArray(:,:,k) = dark_imageDataArray(:,:,k) - master_bias;
     end
-    master_dark = MedianCombine(dark_imageDataArray);
+    master_dark = medianCombine(dark_imageDataArray);
     %displayAdjustedImage(master_dark)
     %title("Master Dark")
     %figure

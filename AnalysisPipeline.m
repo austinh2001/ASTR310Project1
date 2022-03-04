@@ -52,7 +52,7 @@ for t=1:length(informationTables)
         summed_colorized_image = CoAdd(summed_colorized_image,colorized_images{n});
     end
     figure
-    displayAdjustedImage(summed_colorized_image,5)
+    displayImage(summed_colorized_image)
 end
 
 % Remove Stars

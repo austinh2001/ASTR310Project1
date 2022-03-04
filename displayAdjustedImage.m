@@ -24,12 +24,15 @@ function [] = displayAdjustedImage(image_data,z,rotate)
     % The input provided for image_data is not a matrix: The value of
     % image_data which was provided is not an array.
 
-    % The input provided for image_data is not a validly sized matrix: The
+    % The input provided for image_data is not a validly sized array: The
     % value of image_data which was provided is not a validly sized array.
     % A valid array has dimensions of n x m.
 
     % The input provided for rotate is not a boolean: The value of rotate
     % which was provided is not a boolean or boolean-like value.
+
+    % Z-score provided was 0, which is not a valid value: A z value of 0
+    % was given, but it cannot be 0.
 
     %----------------------------------------------------------------------
 
@@ -80,7 +83,7 @@ function [] = displayAdjustedImage(image_data,z,rotate)
         catch cannot_display
             display("Cannot display error-inducing parameter.")
         end
-        error("The input provided for image_data is not a validly sized matrix: " + mat2str(size(image_data)))
+        error("The input provided for image_data is not a validly sized array: " + mat2str(size(image_data)))
     end
 
     % Checking whether the input value of z is a valid scalar
@@ -110,19 +113,36 @@ function [] = displayAdjustedImage(image_data,z,rotate)
         warning("Provided z-score was negative, was this intentional? Z-score has been made positive to compensate.")
         z = abs(z);
     end
-
+    
+    % Calculate the mean of the image data
     data_mean = mean(image_data(:));
+
+    % Calculate the standard deviation of the image data
     data_std = std(image_data(:));
+
+    % Calculate the minimum value of the image data
     data_min = min(image_data(:));
+
+    % Calculate the maximum value of the image data
     data_max = max(image_data(:));
+
+    % Calculate the lower color threshold
     cmin = max(data_min, data_mean - z * data_std);
+
+    % Calculate the upper color threshold
     cmax = min(data_max, data_mean + z * data_std);
+    
+    % Checking if the z-score is zero. If it is raise an error.
     if(z~=0)
+        % Determine whether the image data should be rotated to the default
+        % orientation
         if(rotate)
+            % Display the rotated image data
             imagesc(flipud(imrotate(image_data,90)),[cmin, cmax])
             axis image
             set(gca,'YDir','normal') 
         else
+            % Display the image data
             imagesc(image_data,[cmin, cmax])
             axis image
         end
