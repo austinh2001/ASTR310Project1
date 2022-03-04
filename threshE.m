@@ -1,12 +1,6 @@
-function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = threshE(im,col,row,rad1,rad2,degrees_angle,noise_region,z,kccd,focal_length,pixel_size)
-    % Description: Generates a threshold image as well as providing some numerical results relating to the threshold image. 
-    % based on a center
-    % of some ellipse which defines the bounds of some object, the major
-    % and minor radii of an inner sky annulus, the major and minor radii of
-    % an outer sky annulus, a region from which to extract noise data, some
-    % z-score which will define the bounds of the threshold image, and the
-    % CCD gain represented as ADU/electron (which is 1/egain).
-
+function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col,row,rad1,rad2,degrees_angle,bounding_array,z)
+    % Description: Generates a threshold image within an elliptical region of an image.
+    
     %----------------------------------------------------------------------
 
     % Input: 
@@ -28,7 +22,7 @@ function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = thres
     % degrees_angle: The angle (in degrees), measured counter-clockwise, from the 
     % horizontal direction to rotate the ellipse of the target aperture
 
-    % noise_region: A 2 x 2 array consisting of two [x,y] pixel
+    % bounding_array: A 2 x 2 array consisting of two [x,y] pixel
     % coordinates, which uniquely define a rectangle.
     % Example: region = [[x1,y1] ; [x2,y2]]
 
@@ -51,9 +45,58 @@ function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = thres
     % threshold_image: An image array (matrix/2D array) containing all values
     % greater than some calculated upper threshold, and 0 otherwise.
 
+    % total_angular_area: The calculated angular area associated with the
+    % values within the ellipse and are greater than the calculated 
+    % threshold value.
+
+    % flx: The calculated total flux of the values remaining in the
+    % threshold image.
+
+    % flx_err: The calculated error associated with the flux.
+    
+    % threshold_ADU: The calculated cutoff ADU for the threshold image. All
+    % values below this threshold will appear as 0 in the threshold image
+    % as long as they are within the ellipse.
+
     %----------------------------------------------------------------------
 
     % Errors:
+
+    % The input provided for im is not a matrix: The value of
+    % im which was provided is not an array.
+
+    % The input provided for col is not a valid scalar: The value of col is
+    % not a scalar.
+
+    % The input provided for row is not a valid scalar: The value of row is
+    % not a scalar.
+
+    % The input provided for rad1 is not a valid scalar: The value of rad1 is
+    % not a scalar.
+
+    % The input provided for rad2 is not a valid scalar: The value of rad2 is
+    % not a scalar.
+
+    % The input provided for degrees_angle is not a valid scalar: The value 
+    % of degrees_angle is not a scalar.
+
+    % The input provided for bounding_array is not a matrix: The value of
+    % noise region is not a matrix.
+
+    % The input provided for bounding_array is not a valid set of points: The
+    % size of the noise region points array is incorrect.
+
+    % The input provided for z is not a valid scalar: The value of z is
+    % not a scalar.
+
+    % The input provided for kccd is not a valid scalar: The value of kccd is
+    % not a scalar.
+
+    % The input provided for focal_length is not a valid scalar: The value of focal_length is
+    % not a scalar.
+
+    % The input provided for pixel_size is not a valid scalar: The value of pixel_size is
+    % not a scalar.
     
     %----------------------------------------------------------------------
 
@@ -129,61 +172,30 @@ function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = thres
         error("The input provided for degrees_angle is not a valid scalar.")
     end
     
-    % Checking whether the input value of noise_region is a 2 x 2 array and
+    % Checking whether the input value of bounding_array is a 2 x 2 array and
     % raising an error if it is not
-    if(~ismatrix(noise_region))
+    if(~ismatrix(bounding_array))
         try
-            display(noise_region)
+            display(bounding_array)
         catch cannot_display
             display("Cannot display error-inducing parameter.")
         end
-        error("The input provided for noise_region is not a matrix.")
+        error("The input provided for bounding_array is not a matrix.")
     else
-        s = size(noise_region);
+        s = size(bounding_array);
         if(s(1) ~= 2 || s(2) ~= 2)
             try
-                display(noise_region)
+                display(bounding_array)
             catch cannot_display
                 display("Cannot display error-inducing parameter.")
             end
-            error("The input provided for noise_region is not a valid set of points.")
+            error("The input provided for bounding_array is not a valid set of points.")
         end
     end
     
-    % Checking whether the input value of z is a valid scalar
-    if(~isscalar(z) || isa(z,"string"))
-        try
-            display(z)
-        catch cannot_display
-            display("Cannot display error-inducing parameter.")
-        end
-        error("The input provided for z is not a valid scalar.")
-    end
-
-    % Checking whether the input value of kccd is a valid scalar
-    if(~isscalar(kccd) || isa(kccd,"string"))
-        try
-            display(kccd)
-        catch cannot_display
-            display("Cannot display error-inducing parameter.")
-        end
-        error("The input provided for kccd is not a valid scalar.")
-    end
-
-    % Checking whether the input value of focal_length is a valid scalar
-    if(~isscalar(focal_length) || isa(focal_length,"string"))
-        try
-            display(focal_length)
-        catch cannot_display
-            display("Cannot display error-inducing parameter.")
-        end
-        error("The input provided for focal_length is not a valid scalar.")
-    end
-
-
-    
-    % Find the threshold value, as determined by the noise region
-    [threshold_ADU,skyNoiseMu,skyNoiseRegion] = calculateThreshold(im,noise_region,z);
+    % Find the threshold value, as determined by the sky noise region
+    sky_noise_region = generateSkyNoiseRegion(im,bounding_array);
+    threshold_ADU = calculateThreshold(sky_noise_region,z)
 
     % Generate an empty template array the same size as the original image
     threshold_image = zeros(size(im));
@@ -197,7 +209,8 @@ function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = thres
     % rotated ellipse
     alpha = degrees_angle * (pi/180);
     ixsrc=(((cos(alpha).*(xx-col)+sin(alpha).*(yy-row))./rad1).^2+(((sin(alpha).*(xx-col)-cos(alpha).*(yy-row))./rad2).^2))<=1;
-    
+    figure
+    threshold_image_values = [];
     % Loop through the original image and check if the value in im is both
     % greater than or equal to the threshold_ADU and is within the rotated ellipse
     pixel_count = 0;
@@ -205,34 +218,10 @@ function [threshold_image, pixel_angular_area,flx,flx_err,threshold_ADU] = thres
         for j=1:b
             if(im(i,j) >= threshold_ADU && ixsrc(i,j))
                 pixel_count = pixel_count + 1;
+                threshold_image_values = [threshold_image_values im(i,j)];
                 threshold_image(i,j) = im(i,j);
             end
         end
-    end
-    
-    % Calculate the total_angular_area of the threshold image
-
-    % arc second/pixel side
-    resolution = 206.265*(pixel_size/focal_length);
-
-    % arc second^2/pixel
-    pixel_angular_area = resolution^2;
-    
-    % arc second^2
-    total_pixel_area = pixel_angular_area * pixel_count;
-    
-    % arc minute^2
-    total_pixel_area = total_pixel_area/ (60^2);
-    
-    % Calculate the associated flux and error in the flux associated with
-    % the threshold image
-
-    sky=skyNoiseMu;                 % sky value
-    pix=im(ixsrc)-sky;              % source without sky
-    sig=sqrt(im(ixsrc)/kccd);       % photon noise per pixel
-    ssig=std(skyNoiseRegion(:))/sqrt(length(skyNoiseRegion(:)))/kccd; % sky noise in average
-    flx=sum(pix)/kccd;                            % flux
-    flx_err=sqrt(sum(sig).^2+ssig^2);             % total error
-
+    end   
 end
 

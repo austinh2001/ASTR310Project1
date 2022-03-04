@@ -49,7 +49,7 @@ for t=1:length(informationTables)
     end
     summed_colorized_image = zeros(size(colorized_images{1}));
     for n=1:length(colorized_images)
-        summed_colorized_image = CoAdd(summed_colorized_image,colorized_images{n});
+        summed_colorized_image = coAdd(summed_colorized_image,colorized_images{n});
     end
     figure
     displayImage(summed_colorized_image)
