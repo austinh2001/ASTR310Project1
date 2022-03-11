@@ -4,8 +4,9 @@ function [] = createColorbar(colorObject,title)
     limits = colorObject{2};
     colormap(c_map);
     c_bar = colorbar;
-    c_bar.TickLabels = round(linspace(limits(1),limits(2),11));
-    %c_bar.Location = 'southoutside';
+    ticks = 5;
+    c_bar.TickLabels = round(linspace(limits(1),limits(2),ticks));
+    c_bar.Location = 'southoutside';
     c_bar.Label.String = title;
 end
 

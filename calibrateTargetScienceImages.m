@@ -63,6 +63,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
 
     for i=1:number_of_science_image_filters
         calibrated_science_images = [];
+        science_image_fits_header_structs = {};
         % Get filter name
         folder_path = science_image_folders{i}.folder;
         folder_path_names = split(folder_path,"\");
@@ -75,6 +76,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
             science_image_directory = science_image_folders{i}(j).folder;
             science_image_filename = science_image_folders{i}(j).name;
             science_image_fits = rfits(fullfile(science_image_directory +"\",science_image_filename));
+            science_image_fits_header_structs{end+1} = science_image_fits;
             science_image_data = science_image_fits.data;
 
             %Calculate the exposure time correction factor between the
@@ -140,6 +142,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         mkdir(results_for_target_file_path);
         %Write the FITS file to the filter folder in the target folder
         unrotated_final_calibrated_science_image = final_calibrated_science_images(:,:,i);
-        wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
+        writeCalibratedFITS(unrotated_final_calibrated_science_image,science_image_fits_header_structs{1},results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit")
+        %wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end

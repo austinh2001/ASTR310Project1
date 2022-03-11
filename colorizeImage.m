@@ -14,6 +14,5 @@ function [color_normalized_image_RGB_data,colorObject] = colorizeImage(image_dat
     G_map = linspace(0,1,round(range(2)-range(1))) * G;
     B_map = linspace(0,1,round(range(2)-range(1))) * B;
     c_map = [R_map',G_map',B_map'];
-    limits = range;
-    colorObject = {c_map,limits};
+    colorObject = {c_map,range};
 end

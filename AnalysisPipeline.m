@@ -8,6 +8,6 @@ calibration_folder_path = "Calibrated Images\";
 
 % Establish generic filenames for resulting calibrated images
 generic_filenames = dates + "_calibrated_image";
-
-colorized_combined_images_24 = colorizeCalibratedObservations(calibration_folder_path,dates(2));
-colorized_combined_images_26 = colorizeCalibratedObservations(calibration_folder_path,dates(3));
+ADU_range = [400,3000];
+colorized_combined_images_24 = colorizeCalibratedObservations(calibration_folder_path,dates(1),ADU_range);
+%colorized_combined_images_26 = colorizeCalibratedObservations(calibration_folder_path,dates(3));

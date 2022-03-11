@@ -24,6 +24,7 @@ function wfits(k,fname,options)
         k=[];
         k.data=u;
     end
+
     % Defining defaults
     if (~isfield(k,'bitpix')),
         k.bitpix=-32;
@@ -51,7 +52,6 @@ function wfits(k,fname,options)
             k.crota(i)=0;
         end
     end
-            
     
     if (k.bitpix>0),
         if (~(isfield(k,'bscale')&&isfield(k,'bzero'))),
@@ -66,9 +66,11 @@ function wfits(k,fname,options)
         k.bscale=1;
         k.bzero=0;
     end
+    
     str='SIMPLE  =                    T /'; c=wpad(h,str);
     str=sprintf('BITPIX  = %20d /',k.bitpix); c=c+wpad(h,str);
     str=sprintf('NAXIS   = %20d /',k.naxis); c=c+wpad(h,str);
+
     for i=1:k.naxis,
 	    str=sprintf('NAXIS%d  = %20d /',i,k.numpt(i)); c=c+wpad(h,str);
     end
