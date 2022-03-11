@@ -2,7 +2,7 @@ function [] = writeCalibratedFITS(image_data, component_image_fits_header_struct
     if(~isstruct(component_image_fits_header_struct))
         error("Not a struct.")
     end
-    relevant_header_data = ["BITPIX","NAXIS","NAXIS1","NAXIS2","BSCALE","BZERO","DATE-OBS","EXPTIME","FILTER","XPIXSZ","YPIXSZ","EGAIN","INSTRUME"];
+    relevant_header_data = ["BITPIX","NAXIS","NAXIS1","NAXIS2","BSCALE","BZERO","DATE_OBS","TELESCOP","FOCALLEN","INSTRUME","EXPTIME","FILTER","XPIXSZ","YPIXSZ","EGAIN"];
     current_fits_header_struct = struct();
     current_fits_header_struct = setfield(current_fits_header_struct,"data",image_data);
     current_fits_header_struct = setfield(current_fits_header_struct,"numpt",size(image_data));

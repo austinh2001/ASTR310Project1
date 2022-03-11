@@ -1,4 +1,4 @@
-function [] = displayAdjustedImage(image_data,z,rotate)
+function [] = displayAdjustedImage(image_data,z)
     % Description: Displays image data with some z-score adjustment with the ability to rotate it into the default orientation. 
 
     %----------------------------------------------------------------------
@@ -8,10 +8,6 @@ function [] = displayAdjustedImage(image_data,z,rotate)
     % image_data: An n x m array where n is the pixel length in the 'x' 
     % (horizontal) direction and m is the pixel length in the 'y' (vertical)
     % direction.
-
-    % rotate (optional): A boolean which controls whether the resulting
-    % image displayed is rotated into the default orientation (such that n
-    % is horizontal and m is vertical). This has a default value of true.
     
     %----------------------------------------------------------------------
 
@@ -27,9 +23,6 @@ function [] = displayAdjustedImage(image_data,z,rotate)
     % The input provided for image_data is not a validly sized array: The
     % value of image_data which was provided is not a validly sized array.
     % A valid array has dimensions of n x m.
-
-    % The input provided for rotate is not a boolean: The value of rotate
-    % which was provided is not a boolean or boolean-like value.
 
     % Z-score provided was 0, which is not a valid value: A z value of 0
     % was given, but it cannot be 0.
@@ -48,7 +41,6 @@ function [] = displayAdjustedImage(image_data,z,rotate)
     
     % Setting default values of z to 1 and rotate to true
     if (nargin==1), z=1; end
-    if (nargin<=2), rotate=true; end
 
     % Checking  whether the input value of image_data is an array and
     % raising an error if it is not
@@ -95,17 +87,6 @@ function [] = displayAdjustedImage(image_data,z,rotate)
         end
         error("The input provided for z is not a valid scalar.")
     end
-
-    % Checking whether the input value of rotate is a valid boolean and
-    % raising an error if it is not.
-    if(~isa(rotate,"logical"))
-        try
-            display(image_data)
-        catch cannot_display
-            display("Cannot display error-inducing parameter.")
-        end
-        error("The input provided for rotate is not a boolean.")
-    end
     
     % Checking if the z-score is negative. If it is, send the user a
     % warning and convert it to a positive value
@@ -134,18 +115,10 @@ function [] = displayAdjustedImage(image_data,z,rotate)
     
     % Checking if the z-score is zero. If it is raise an error.
     if(z~=0)
-        % Determine whether the image data should be rotated to the default
-        % orientation
-        if(rotate)
-            % Display the rotated image data
-            imagesc(flipud(imrotate(image_data,90)),[cmin, cmax])
-            axis image
-            set(gca,'YDir','normal') 
-        else
-            % Display the image data
-            imagesc(image_data,[cmin, cmax])
-            axis image
-        end
+        % Display the image data
+        imagesc(flipud(rot90(image_data)),[cmin, cmax])
+        axis image
+        set(gca,'YDir','normal') 
     else
         error("Z-score provided was 0, which is not a valid value.")
     end

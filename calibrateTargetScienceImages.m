@@ -129,7 +129,7 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
             final_calibrated_science_images(:,:,i) = calibrated_science_images;
         end
         figure
-        displayAdjustedImage(final_calibrated_science_images(:,:,i),1,rotate)
+        displayAdjustedImage(final_calibrated_science_images(:,:,i),1)
         title(observation_date + ":" + telescope_name + "-" + target_name + ": " + filter_name)
         %Get the filter name associated with the shifted, calibrated
         %science images
@@ -142,7 +142,22 @@ function [final_calibrated_science_images] = calibrateTargetScienceImages(telesc
         mkdir(results_for_target_file_path);
         %Write the FITS file to the filter folder in the target folder
         unrotated_final_calibrated_science_image = final_calibrated_science_images(:,:,i);
-        writeCalibratedFITS(unrotated_final_calibrated_science_image,science_image_fits_header_structs{1},results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit")
+
+        % Set the names of the telescopes in the header files (this is
+        % specific to UMD's observatory telescopes)
+        calibrated_image_header_struct = science_image_fits_header_structs{1};
+        if(telescope_name == "14in")
+            calibrated_image_header_struct.telescop = '14in Celestron SCT';
+            calibrated_image_header_struct.focallen = 3912;
+        elseif(telescope_name == "07in")
+            calibrated_image_header_struct.telescop = '7in AP Refractor';
+            calibrated_image_header_struct.focallen = 1600;
+        elseif(telescope_name == "06in")
+            calibrated_image_header_struct.telescop = '6in AP';
+            calibrated_image_header_struct.focallen = 1372;
+        end
+        calibrated_image_header_struct.date_obs = char(observation_date);
+        writeCalibratedFITS(unrotated_final_calibrated_science_image,calibrated_image_header_struct,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit")
         %wfits(unrotated_final_calibrated_science_image,results_for_target_file_path + observation_date + "_" + generic_output_filename + "_" + telescope_name + "_" + target_name + "_" + filter_name + ".fit");
     end
 end

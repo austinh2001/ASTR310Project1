@@ -1,4 +1,4 @@
-function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col,row,rad1,rad2,degrees_angle,bounding_array,z)
+function [threshold_image,threshold_image_values,threshold_ADU, noise_region] = threshE(im,center_coodinates,rad1,rad2,degrees_angle,z,noise_region,method)
     % Description: Generates a threshold image within an elliptical region of an image.
     
     %----------------------------------------------------------------------
@@ -9,10 +9,7 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % (horizontal) direction and m is the pixel length in the 'y' (vertical)
     % direction.
     
-    % col: The horizontal pixel index of the center of the ellipse of the
-    % target aperture
-
-    % row: The vertical pixel index of the center of the ellipse of the
+    % center_coodinates: A 2 x 1 array containing the horizontal pixel index and the vertical pixel index of the center of the ellipse of the
     % target aperture
 
     % rad1: The pixel length of the major axis of the target aperature
@@ -22,21 +19,15 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % degrees_angle: The angle (in degrees), measured counter-clockwise, from the 
     % horizontal direction to rotate the ellipse of the target aperture
 
-    % bounding_array: A 2 x 2 array consisting of two [x,y] pixel
-    % coordinates, which uniquely define a rectangle.
-    % Example: region = [[x1,y1] ; [x2,y2]]
-
     % z: The z-score/number of standard deviations away from the mean you
     % are trying to define an upper threshold for.
-    
-    % kccd: Represents the number of ADU per electron associated with the
-    % CCD, this is equivalent to 1/egain.
 
-    % focal_length: The focal length of the telescope used to take the
-    % original image, im, in millimeters (mm)
+    % noise_region: A boolean 2 x 2 array which has the same size as im (n x m)
+    % consisting of a 1 if a given pixel is in the region and a 0 if it is
+    % not
 
-    % pixel_scale: The pixel scale of the CCD used to take the
-    % original image, im, in millimeters (mm)
+    % method: A string which determines by which method (mean or median)
+    % the threshold ADU value should be determined from the sky noise
 
     %----------------------------------------------------------------------
 
@@ -45,18 +36,17 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % threshold_image: An image array (matrix/2D array) containing all values
     % greater than some calculated upper threshold, and 0 otherwise.
 
-    % total_angular_area: The calculated angular area associated with the
-    % values within the ellipse and are greater than the calculated 
-    % threshold value.
-
-    % flx: The calculated total flux of the values remaining in the
-    % threshold image.
-
-    % flx_err: The calculated error associated with the flux.
+    % threshold_image_values: 1 x (number of remaining values out of n*m
+    % original image values) array containing the desired values which
+    % remain in the threshold image
     
     % threshold_ADU: The calculated cutoff ADU for the threshold image. All
     % values below this threshold will appear as 0 in the threshold image
     % as long as they are within the ellipse.
+
+    % noise_region: A boolean 2 x 2 array which has the same size as im (n x m)
+    % consisting of a 1 if a given pixel is in the region and a 0 if it is
+    % not
 
     %----------------------------------------------------------------------
 
@@ -65,11 +55,8 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % The input provided for im is not a matrix: The value of
     % im which was provided is not an array.
 
-    % The input provided for col is not a valid scalar: The value of col is
-    % not a scalar.
-
-    % The input provided for row is not a valid scalar: The value of row is
-    % not a scalar.
+    % The input provided for center_coodinates is not a valid coordinate array: The value of center_coodinates is
+    % not a matrix.
 
     % The input provided for rad1 is not a valid scalar: The value of rad1 is
     % not a scalar.
@@ -80,23 +67,11 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % The input provided for degrees_angle is not a valid scalar: The value 
     % of degrees_angle is not a scalar.
 
-    % The input provided for bounding_array is not a matrix: The value of
-    % noise region is not a matrix.
-
-    % The input provided for bounding_array is not a valid set of points: The
-    % size of the noise region points array is incorrect.
-
     % The input provided for z is not a valid scalar: The value of z is
     % not a scalar.
 
-    % The input provided for kccd is not a valid scalar: The value of kccd is
-    % not a scalar.
-
-    % The input provided for focal_length is not a valid scalar: The value of focal_length is
-    % not a scalar.
-
-    % The input provided for pixel_size is not a valid scalar: The value of pixel_size is
-    % not a scalar.
+    % The input provided for method is not a valid scalar: The value of method is
+    % not a string.
     
     %----------------------------------------------------------------------
 
@@ -105,7 +80,10 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
     % ThreshE adaptations from AperE by Team CANS
 
     %----------------------------------------------------------------------
-    
+
+    % Setting default value of method, if not provided
+    if (nargin<=7), method="mean"; end
+
     % Checking whether the input value of im is a matrix (2D array) and
     % raising an error if it is not
     if(~ismatrix(im))
@@ -117,26 +95,15 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
         error("The input provided for im is not a matrix.")
     end
 
-    % Checking whether the input value of col is a valid scalar and
+    % Checking whether the input value of center_coodinates is a valid coordinate array and
     % raising an error if it is not
-    if(~isscalar(col) || isa(col,"string"))
+    if(~ismatrix(center_coodinates))
         try
-            display(col)
+            display(center_coodinates)
         catch cannot_display
             display("Cannot display error-inducing parameter.")
         end
-        error("The input provided for col is not a valid scalar.")
-    end
-
-    % Checking whether the input value of row is a valid scalar and
-    % raising an error if it is not
-    if(~isscalar(row) || isa(row,"string"))
-        try
-            display(row)
-        catch cannot_display
-            display("Cannot display error-inducing parameter.")
-        end
-        error("The input provided for row is not a valid scalar.")
+        error("The input provided for center_coodinates is not a valid scalar.")
     end
 
     % Checking whether the input value of rad1 is a valid scalar and
@@ -171,54 +138,54 @@ function [threshold_image,threshold_image_values,threshold_ADU] = threshE(im,col
         end
         error("The input provided for degrees_angle is not a valid scalar.")
     end
-    
-    % Checking whether the input value of bounding_array is a 2 x 2 array and
+
+    % Checking whether the input value of z is a valid scalar and
     % raising an error if it is not
-    if(~ismatrix(bounding_array))
+    if(~isscalar(z) || isa(z,"string"))
         try
-            display(bounding_array)
+            display(z)
         catch cannot_display
             display("Cannot display error-inducing parameter.")
         end
-        error("The input provided for bounding_array is not a matrix.")
-    else
-        s = size(bounding_array);
-        if(s(1) ~= 2 || s(2) ~= 2)
-            try
-                display(bounding_array)
-            catch cannot_display
-                display("Cannot display error-inducing parameter.")
-            end
-            error("The input provided for bounding_array is not a valid set of points.")
+        error("The input provided for z is not a valid scalar.")
+    end
+
+    % Checking whether the input value of method is a valid string and
+    % raising an error if it is not
+    if(~isa(method,"string"))
+        try
+            display(method)
+        catch cannot_display
+            display("Cannot display error-inducing parameter.")
         end
+        error("The input provided for method is not a valid string.")
     end
     
-    % Find the threshold value, as determined by the sky noise region
-    sky_noise_region = generateSkyNoiseRegion(im,bounding_array);
-    threshold_ADU = calculateThreshold(sky_noise_region,z);
-
     % Generate an empty template array the same size as the original image
     threshold_image = zeros(size(im));
-    
-    % Generate a meshgrid
-    [a,b]=size(im);
-    [xx,yy]=meshgrid(1:b,1:a);
-    
-    % Create a 2D array of boolean values the same size as the original image
-    % to determine whether a given point in im is within the rotated ellipse
-    alpha = degrees_angle * (pi/180);
-    ixsrc=(((cos(alpha).*(xx-col)+sin(alpha).*(yy-row))./rad1).^2+(((sin(alpha).*(xx-col)-cos(alpha).*(yy-row))./rad2).^2))<=1;
-    figure
+
     threshold_image_values = [];
+
+    % Generate the elliptical region of the source
+    ixsrc = generateEllipticalRegion(im,center_coodinates,rad1,rad2,degrees_angle);
+    
+    % Find the threshold value, as determined by the sky noise region
+    % If no noise region is provided, it will default to everything which
+    % is not the source being the noise region
+    if (nargin==6), noise_region=~ixsrc; end
+    sky_noise_values = getRegionValues(im,noise_region);
+    threshold_ADU = calculateThreshold(sky_noise_values,z,method)
+
     % Loop through the original image and check if the value in im is both
     % greater than or equal to the threshold_ADU and is within the rotated ellipse
     pixel_count = 0;
-    for i=1:a
-        for j=1:b
-            if(im(i,j) >= threshold_ADU && ixsrc(i,j))
+    s = size(im);
+    for x=1:s(1)
+        for y=1:s(2)
+            if(im(x,y) >= threshold_ADU && ixsrc(x,y))
                 pixel_count = pixel_count + 1;
-                threshold_image_values = [threshold_image_values im(i,j)];
-                threshold_image(i,j) = im(i,j);
+                threshold_image_values = [threshold_image_values im(x,y)];
+                threshold_image(x,y) = im(x,y);
             end
         end
     end   

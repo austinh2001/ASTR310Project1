@@ -1,4 +1,4 @@
-function [] = displayFITS(fits_image, rotate)
+function [] = displayFITS(fits_image)
     % Description: Displays FITS image data directly with the ability to rotate it into the default orientation. 
 
     %----------------------------------------------------------------------
@@ -24,9 +24,6 @@ function [] = displayFITS(fits_image, rotate)
     
     %----------------------------------------------------------------------
     
-    % Setting default value of rotate to true
-    if (nargin==1), rotate=true; end
-
     % Checking  whether the input value of fits_image is a struct and
     % raising an error if it is not
     if(~isstruct(fits_image))
@@ -39,6 +36,6 @@ function [] = displayFITS(fits_image, rotate)
     end
     
     % Display the image data in the FITS struct
-    displayImage(fits_image.data,rotate)
+    displayImage(fits_image.data)
 end
 
