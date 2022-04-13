@@ -30,7 +30,6 @@ function [final_colorized_image] = colorizeCalibratedImages(calibration_folder_p
                             color = [0,0,0];
                             ADU_range = [0,1000];
                         end
-
                         [colorized_image, color_object] = colorizeImage(image_data,color,ADU_range);
                         colorized_images{end+1} = colorized_image;
                         if(display_colorized_images)
@@ -47,7 +46,7 @@ function [final_colorized_image] = colorizeCalibratedImages(calibration_folder_p
             end
             summed_colorized_image = zeros(size(colorized_images{1}));
             for n=1:length(colorized_images)
-                summed_colorized_image = coAdd(summed_colorized_image,colorized_images{n});
+                summed_colorized_image = CoAdd(summed_colorized_image,colorized_images{n});
             end
             final_colorized_image = summed_colorized_image;
             if(display_colorized_images)

@@ -8,7 +8,6 @@ function [color_normalized_image_RGB_data,colorObject] = colorizeImage(image_dat
     B = color(3);
     %Create the RGB image data array
     color_normalized_image_RGB_data = cat(3,normalized_image_data*R,normalized_image_data*G,normalized_image_data*B);
-    
     %Create an generic colormap for your color 
     R_map = linspace(0,1,round(range(2)-range(1))) * R;
     G_map = linspace(0,1,round(range(2)-range(1))) * G;
