@@ -10,8 +10,14 @@ calibration_folder_path = "Calibrated Images\";
 generic_filenames = dates + "_calibrated_image";
 filters = ["ha","n","o","s"];
 ADU_ranges = {[800,1600],[400,900],[850,900],[500,700]};
-colors = {[1,0,0],[0,0,0],[0,1,0],[0,0,1]};
+colors = {[0,0,0],[1,0,0],[0,1,0],[0,0,1]};
 colorization_table = createColorizationTable(filters,ADU_ranges,colors)
-%colorized_combined_images = colorizeCalibratedObservations(calibration_folder_path,dates(1),ADU_range);
 colorized_combined_image = colorizeCalibratedImages(calibration_folder_path,dates(1),"07in","A21",colorization_table);
-saveImage(colorized_combined_image,"Analysis Images/Abell21.png")
+saveImage(colorized_combined_image,"Analysis Images/" + "A21_" + "n_o_s" + ".png")
+
+% filters = ["ha","o"];
+% ADU_ranges = {[500,3000],[800,5000]};
+% colors = {[1,0,0],[0,1,0]};
+% colorization_table = createColorizationTable(filters,ADU_ranges,colors)
+% colorized_combined_image = colorizeCalibratedImages(calibration_folder_path,dates(1),"14in","NGC2346",colorization_table);
+% saveImage(colorized_combined_image,"Analysis Images/" + "NGC2346_" + "ha_o" + ".png")
