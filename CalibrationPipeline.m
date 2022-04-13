@@ -16,11 +16,11 @@ generateDataFolder(data_folder_path + target_data_folder_name + "\" ,observation
 
 calibrateObservationNight(observation_folder_path,dates(1),results_folder_path,generic_filename);
 
-target_data_folder_name = "20210924_14in_A310_M27";
-generateDataFolder(data_folder_path + target_data_folder_name + "\" ,observation_folder_path)
-calibrateObservationNight(observation_folder_path,dates(2),results_folder_path,generic_filename);
-
-target_data_folder_name = "20210926_14in_A310_M27";
-generateDataFolder(data_folder_path + target_data_folder_name + "\" ,observation_folder_path)
-calibrateObservationNight(observation_folder_path,dates(3),results_folder_path,generic_filename);
-
+% target_data_folder_name = "20210924_14in_A310_M27";
+% generateDataFolder(data_folder_path + target_data_folder_name + "\" ,observation_folder_path)
+% calibrateObservationNight(observation_folder_path,dates(2),results_folder_path,generic_filename);
+% 
+% target_data_folder_name = "20210926_14in_A310_M27";
+% generateDataFolder(data_folder_path + target_data_folder_name + "\" ,observation_folder_path)
+% calibrateObservationNight(observation_folder_path,dates(3),results_folder_path,generic_filename);
+% 

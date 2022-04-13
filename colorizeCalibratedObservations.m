@@ -2,6 +2,7 @@ function [colorized_combined_images] = colorizeCalibratedObservations(calibratio
     if (nargin==2), ADU_range=[400,2000]; end
     if (nargin<=3), display=true; end
     [calibratedImageDataArrays, informationTables] = getCalibratedObservations(calibration_folder_path,date);
+    informationTables{1}
     colorized_combined_images = [];
     for t=1:length(informationTables)
         table = informationTables(:,t);
@@ -17,11 +18,14 @@ function [colorized_combined_images] = colorizeCalibratedObservations(calibratio
             if(filter_name == "ha")
                 color = [1,0,0];
             elseif(filter_name == "o")
-                color = [0,1,135/255];
+                %color = [0,1,135/255];
+                color = [0,1,0];
             elseif(filter_name == "n")
-                color = [1,135/255,0];
+                %color = [1,135/255,0];
+                color = [0,0,1];
             elseif(filter_name == "s")
-                color = [234/255,1,0];
+                %color = [234/255,1,0];
+                color = [0,0,0];
             end
             n_devs = 1;
             image_data = image_data_array(:,:,i);
@@ -43,7 +47,7 @@ function [colorized_combined_images] = colorizeCalibratedObservations(calibratio
         for n=1:length(colorized_images)
             summed_colorized_image = coAdd(summed_colorized_image,colorized_images{n});
         end
-        %colorized_combined_images = [colorized_combined_images summed_colorized_image];
+        colorized_combined_images = [colorized_combined_images summed_colorized_image];
         if(display)
             figure
             displayImage(summed_colorized_image)
