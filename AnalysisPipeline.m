@@ -1,5 +1,5 @@
 % Provide the dates of observation which will be used in this analysis
-dates = ["2022-02-19","2021-09-24","2021-09-26"];
+dates = ["2022-02-19","2021-09-24","2021-09-26","2022-04-24"];
 
 % Create the folder path string for each observation night and the calibrated
 % images
@@ -10,10 +10,17 @@ calibration_folder_path = "Calibrated Images\";
 generic_filenames = dates + "_calibrated_image";
 filters = ["ha","n","o","s"];
 ADU_ranges = {[800,1600],[400,900],[850,900],[500,700]};
-colors = {[0,0,0],[1,0,0],[0,1,0],[0,0,1]};
+colors = {[1,0,0],[1,0,0],[0,1,0],[0,0,1]};
+
+% Colorization
+
+% colorization_table = createColorizationTable(filters,ADU_ranges,colors)
+% colorized_combined_image = colorizeCalibratedImages(calibration_folder_path,dates(1),"07in","A21",colorization_table);
+% saveImage(colorized_combined_image,"Analysis Images/" + "A21_" + "n_o_s" + ".png")
+
 colorization_table = createColorizationTable(filters,ADU_ranges,colors)
-colorized_combined_image = colorizeCalibratedImages(calibration_folder_path,dates(1),"07in","A21",colorization_table);
-saveImage(colorized_combined_image,"Analysis Images/" + "A21_" + "n_o_s" + ".png")
+% colorized_combined_image = colorizeCalibratedImages(calibration_folder_path,dates(1),"07in","A21",colorization_table);
+% saveImage(colorized_combined_image,"Analysis Images/" + "A21_" + "n_o_s" + ".png")
 
 % filters = ["ha","o"];
 % ADU_ranges = {[500,3000],[800,5000]};

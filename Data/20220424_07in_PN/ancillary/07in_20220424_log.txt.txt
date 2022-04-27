@@ -1,0 +1,29 @@
+LOCAL DATE:	04/24/2022			
+LOCAL START TIME: 19:00		
+LOCAL END TIME:	23:00		
+
+NAME(S):	Austin Humphreys, Rachel Weller
+GOAL(S):	Observe Abell 21 through Halpha,OIII,SII,NII	
+
+TRANSPARENCY: Average				
+SEEING:		Poor 2/5
+TEMPERATURE:	77F to 86F		
+HUMIDITY:	45% to 50%		
+
+TELESCOPE:		07in (178mm) AP refractor
+CAMERA:			SBIG ST-10
+Camera temp setpoint:	-15C
+
+
+IMAGE LOG
+# frames	target		exposure length		filter
+17		flats		0.5s			H-a
+17		flats		0.8s			OIII
+17		flats		0.7s			SII
+17		flats		0.8s			NII
+1		A21		30s			clear
+4		A21		300s			H-a
+3		A21		300s			OIII
+3		A21		300s			SII
+3		A21		300s			NII
+
